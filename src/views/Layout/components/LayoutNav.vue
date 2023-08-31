@@ -7,7 +7,7 @@
         <div class="container">
             <ul>
                 <template v-if="true">
-                    <li><a href="javascript:;"><i class=" iconfont icon-user"></i>周杰伦</a></li>
+                    <li><a href="javascript:;"><i class=" iconfont icon-user"></i>用户</a></li>
                     <li>
                         <el-popconfirm title="确认退出吗?" confirm-button-text="确认" cancel-button-text="取消">
                             <template #reference>
@@ -31,18 +31,18 @@
 
 <style scoped lang="scss">
 .app-topnav {
-    background: #333;
+    background: #F5F5F5;
 
     ul {
         display: flex;
-        height: 53px;
+        height: 35px;
         justify-content: flex-end;
         align-items: center;
 
         li {
             a {
                 padding: 0 15px;
-                color: #cdcdcd;
+                color: #090909;
                 line-height: 1;
                 display: inline-block;
 

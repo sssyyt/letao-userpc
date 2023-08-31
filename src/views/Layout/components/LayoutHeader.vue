@@ -1,5 +1,6 @@
 <script setup>
-
+import { useCategoryStore } from '@/stores/categoryStore'
+const categoryStore = useCategoryStore()
 </script>
 
 <template>
@@ -12,15 +13,12 @@
                 <li class="home">
                     <RouterLink to="/">首页</RouterLink>
                 </li>
-                <li>
-                    <RouterLink to="/">居家</RouterLink>
-                </li>
-                <li>
-                    <RouterLink to="/">美食</RouterLink>
-                </li>
-                <li>
-                    <RouterLink to="/">服饰</RouterLink>
-                </li>
+
+                 <li class="home" v-for="item in categoryStore.categoryList" :key="item.id">
+          <RouterLink active-class="active" :to="`/category/${item.id}`">
+            {{ item.name }}
+          </RouterLink>
+        </li>
             </ul>
             <div class="search">
                 <i class="iconfont icon-search"></i>
@@ -47,8 +45,8 @@
 
         a {
             display: block;
-            height: 132px;
-            width: 100%;
+            height: 102px;
+            width: 90%;
             text-indent: -9999px;
             background: url('@/assets/images/logo.png') no-repeat center 18px / contain;
         }
@@ -62,15 +60,15 @@
         z-index: 998;
 
         li {
-            margin-right: 40px;
-            width: 38px;
+            margin-right: 20px;
+            width: 80px;
             text-align: center;
 
             a {
                 font-size: 16px;
                 line-height: 32px;
-                height: 32px;
-                display: inline-block;
+                height: 22px;
+                display: inline;
 
                 &:hover {
                     color: $letaoColor;
