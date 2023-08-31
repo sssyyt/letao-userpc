@@ -2,7 +2,7 @@ import httpInstance from "@/utils/http"
 
 
 export function getCategory() {
-    return httpInstance({
+   return httpInstance({
         url: '/base/category',
         params: {
                         id: 1
