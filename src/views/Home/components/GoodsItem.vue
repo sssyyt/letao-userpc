@@ -10,7 +10,7 @@ defineProps({
 
 <template>
   <RouterLink to="/" class="goods-item">
-    <!-- <img v-img-lazy="goods.picture" alt="" /> -->
+    <img v-img-lazy="goods.spuImage" alt="" />
     <p class="name ellipsis">{{ goods.spuName }}</p>
     <p class="desc ellipsis">{{ goods.descript }}</p>
     <p class="price">&yen;{{ goods.priceHigh }}</p>
@@ -20,10 +20,11 @@ defineProps({
 <style lang="scss" scoped>
 .goods-item {
   display: block;
-  width: 220px;
-  padding: 20px 30px;
+  width: 250px;
+  padding: 20px 10px;
   text-align: center;
   transition: all .5s;
+   background-color: #fff;
 
   &:hover {
     transform: translate3d(0, -3px, 0);

@@ -1,8 +1,27 @@
 <script setup>
-
+import { ref } from 'vue';
+import { useRoute } from 'vue-router'
+import { onMounted } from 'vue';
+import { getproductCategorytwo } from '@/apis/categorytwo'
 import { getCategorytwo } from './composables/getaCategorytwo'
 //const { bannerList } = useBanner()
 const { categorytwo } = getCategorytwo()
+const route = useRoute()
+
+// 获取基础列表数据渲染
+const goodList = ref([])
+const reqData = ref({
+    categoryId: route.params.id,
+    page: 1,
+    pageSize: 20,
+})
+
+const getGoodList = async () => {
+    const res = await getproductCategorytwo(reqData.value.categoryId, reqData.value.page)
+    goodList.value = res.data
+
+}
+onMounted(() => getGoodList())
 
 </script>
 
@@ -17,7 +36,10 @@ const { categorytwo } = getCategorytwo()
                 <el-breadcrumb-item>{{ categorytwo.name }}</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
-        
+        <div class="body">``
+            <p>商品列表</p>
+            <GoodsItem v-for="goods in goodList.rows" :goods="goods" :key="goods.id" />
+        </div>
     </div>
 </template>
 

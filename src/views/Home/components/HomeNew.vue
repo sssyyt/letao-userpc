@@ -10,7 +10,6 @@ const newList = ref([])
 const getNewList = async () => {
   const res = await findNewAPI()
   newList.value = res
-  console.log(111,newList.value.data)
 }
 
 onMounted(() => getNewList())
@@ -32,14 +31,12 @@ onMounted(() => getNewList())
 <style scoped lang='scss'>
 .goods-list {
   display: flex;
-  justify-content: space-between;
-  height: 406px;
+  justify-content: space-around;
 
   li {
-    width: 306px;
-    height: 406px;
-
-    background: #f0f9f4;
+  
+display: center;
+    background: #fff;
     transition: all .5s;
 
     &:hover {

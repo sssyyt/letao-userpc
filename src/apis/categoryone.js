@@ -1,6 +1,6 @@
 
 import httpInstance from "@/utils/http"
-import request from '@/utils/http'
+
 //所有一级分类
 export function getCategoryAPI() {
   return httpInstance({
@@ -9,7 +9,7 @@ export function getCategoryAPI() {
 }
 //通过id查询某个一级分类
 export function getCategoryoneid(id) {
-  return request({
+  return httpInstance({
     url: '/base/category/' + id,
   })
 }
