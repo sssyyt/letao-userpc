@@ -4,14 +4,13 @@ import { getCategoryoneid } from '@/apis/categoryone'
 import { useRoute } from 'vue-router'
 import { onBeforeRouteUpdate } from 'vue-router'
 
-export function useCategory() {
+export function useCategoryone() {
   // 获取分类数据
-  const categoryData = ref({})
+  const categoryone = ref({})
   const route = useRoute()
   const getCategory = async (id = route.params.id) => {
     const res = await getCategoryoneid(id)
-    categoryData.value = res.data
-    console.log(111, categoryData)
+    categoryone.value = res.data
   }
   onMounted(() => getCategory())
 
@@ -21,6 +20,6 @@ export function useCategory() {
     getCategory(to.params.id)
   })
   return {
-    categoryData
+    categoryone
   }
 }

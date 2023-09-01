@@ -2,9 +2,15 @@
 
 //import GoodsItem from '../Home/components/GoodsItem.vue'
 //import { useBanner } from './composables/useBanner'
-import { useCategory } from './composables/useCategory'
+import { useCategoryone } from './composables/useCategoryone'
+import { useCategorytwo } from './composables/useCategorytwo'
 //const { bannerList } = useBanner()
-const { categoryData } = useCategory()
+const { categoryone } = useCategoryone()
+const { categorytwo } = useCategorytwo()
+console.log(111, categoryone)
+console.log(444, categoryone.value)
+console.log(222, categorytwo)
+console.log(333, categorytwo.value)
 </script>
 
 <template>
@@ -14,11 +20,22 @@ const { categoryData } = useCategory()
             <div class="bread-container">
                 <el-breadcrumb separator=">">
                     <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-                    <el-breadcrumb-item>{{ categoryData.name}}</el-breadcrumb-item>
+                    <el-breadcrumb-item>{{ categoryone.name }}</el-breadcrumb-item>
                 </el-breadcrumb>
             </div>
-            
-           
+
+        </div>
+        <div class="sub-list">
+            <h3>全部分类</h3>
+            <ul>
+                <li v-for="i in categorytwo" :key="i.id">
+                    <RouterLink :to="`/category/sub/${i.id}`">
+                        <!-- <img :src="i.picture" /> -->
+                        <p>{{ i.name }}</p>
+                    </RouterLink>
+
+                </li>
+            </ul>
         </div>
     </div>
 </template>
@@ -42,14 +59,17 @@ const { categoryData } = useCategory()
             display: flex;
             padding: 0 32px;
             flex-wrap: wrap;
+            justify-content: center;
 
             li {
                 width: 168px;
                 height: 160px;
-
+                display: flex;
+                /* 将li设置为Flex容器 */
+                justify-content: center;
+                /* 将子元素水平居中对齐 */
 
                 a {
-                    text-align: center;
                     display: block;
                     font-size: 16px;
 
@@ -76,7 +96,7 @@ const { categoryData } = useCategory()
         position: relative;
 
         .head {
-            .xtx-more {
+            .letao-more {
                 position: absolute;
                 top: 20px;
                 right: 20px;
@@ -114,4 +134,4 @@ const { categoryData } = useCategory()
         height: 500px;
     }
 }
-</style>
+</style>./composables/useCategoryone

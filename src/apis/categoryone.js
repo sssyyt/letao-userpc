@@ -12,3 +12,4 @@ export function getCategoryoneid(id) {
     url: '/base/category/'+id,
   })
 }
+
