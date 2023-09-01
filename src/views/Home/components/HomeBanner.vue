@@ -15,7 +15,7 @@
 <style scoped lang='scss'>
 .home-banner {
   width: 1240px;
-  height: 500px;
+  height: 400px;
   position: static;
   left: 0;
   top: 0;

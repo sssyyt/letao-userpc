@@ -2,7 +2,7 @@ import httpInstance from '@/utils/http'
 
 
 /**
- * @description: 获取新鲜好物
+ * @description: 获取新上线好物
  * @param {*}
  * @return {*}
  */
@@ -13,7 +13,7 @@ export const findNewAPI = () => {
 }
 
 /**
- * @description: 获取人气推荐
+ * @description: 获取高销量推荐
  * @param {*}
  * @return {*}
  */
