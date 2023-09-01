@@ -3,7 +3,8 @@ import Login from '@/views/Login/index.vue'
 import Layout from '@/views/Layout/index.vue'
 import Home from '@/views/Home/index.vue'
 import Category from '@/views/Category/index.vue'
-
+import miaosha from '@/views/miaosha/index.vue'
+import categorytwo from '@/views/CategoryTwo/index.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -18,6 +19,14 @@ const router = createRouter({
         {
           path: 'category/:id',
           component: Category
+        },
+        {
+          path: 'category/miaosha',
+          component: miaosha
+        },
+        {
+          path: 'category/sub/:id',
+          component: categorytwo
         }
       ]
     },

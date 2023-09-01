@@ -1,14 +1,15 @@
 // 使用id查询二级分类列表用于面包屑导航
 import { onMounted, ref } from 'vue'
-import { getCategorytwoid } from '@/apis/categorytwo'
+import { getaCategorytwoid } from '@/apis/categorytwo'
 import { useRoute } from 'vue-router'
 import { onBeforeRouteUpdate } from 'vue-router'
 
-export function useCategorytwo() {
+export function getCategorytwo() {
+    // 获取分类数据
     const categorytwo = ref([])
     const route = useRoute()
     const getCategory = async (id = route.params.id) => {
-        const res = await getCategorytwoid(id)
+        const res = await getaCategorytwoid(id)
         categorytwo.value = res.data
 
     }

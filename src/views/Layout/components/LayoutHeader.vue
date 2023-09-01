@@ -25,6 +25,9 @@ onMounted(() => { getCategory() })
                         {{ item.name }}
                     </RouterLink>
                 </li>
+                 <li class="home">
+                        <RouterLink to="/category/miaosha">秒杀专区</RouterLink>
+                    </li>
             </ul>
             <div class="search">
                 <i class="iconfont icon-search"></i>

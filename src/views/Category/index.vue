@@ -7,10 +7,6 @@ import { useCategorytwo } from './composables/useCategorytwo'
 //const { bannerList } = useBanner()
 const { categoryone } = useCategoryone()
 const { categorytwo } = useCategorytwo()
-console.log(111, categoryone)
-console.log(444, categoryone.value)
-console.log(222, categorytwo)
-console.log(333, categorytwo.value)
 </script>
 
 <template>
@@ -30,7 +26,7 @@ console.log(333, categorytwo.value)
             <ul>
                 <li v-for="i in categorytwo" :key="i.id">
                     <RouterLink :to="`/category/sub/${i.id}`">
-                        <!-- <img :src="i.picture" /> -->
+                        <img :src="i.picture"  />
                         <p>{{ i.name }}</p>
                     </RouterLink>
 
@@ -79,7 +75,8 @@ console.log(333, categorytwo.value)
                     }
 
                     p {
-                        line-height: 40px;
+                        line-height: 60px;
+                       text-align:center;
                     }
 
                     &:hover {
