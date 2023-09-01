@@ -1,6 +1,5 @@
 <script setup>
-
-import { getCategoryAPI } from '@/apis/layout'
+import { getCategoryAPI } from '@/apis/categoryone'
 import { onMounted, ref } from 'vue'
 //获取分类导航
 const categoryList = ref([])
@@ -19,13 +18,13 @@ onMounted(() => { getCategory() })
             </h1>
             <ul class="app-header-nav">
                 <li class="home">
-                        <RouterLink to="/">首页</RouterLink>
-                    </li>
+                    <RouterLink to="/">首页</RouterLink>
+                </li>
                 <li class="home" v-for="item in categoryList" :key="item.id">
-          <RouterLink active-class="active" :to="`/category/${item.id}`">
-            {{ item.name }}
-          </RouterLink>
-        </li>
+                    <RouterLink active-class="active" :to="`/category/${item.id}`">
+                        {{ item.name }}
+                    </RouterLink>
+                </li>
             </ul>
             <div class="search">
                 <i class="iconfont icon-search"></i>
@@ -139,4 +138,4 @@ onMounted(() => { getCategory() })
         }
     }
 }
-</style>
+</style>@/apis/categoryone
