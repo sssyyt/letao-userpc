@@ -1,4 +1,9 @@
+<script setup>
+import HomeBanner from './components/HomeBanner.vue'
+</script>
 <template>
-  我是home
-  <div style="height: 1000px;"></div>
+  <div class="container">
+   <HomeBanner />
+  </div>
+
 </template>
