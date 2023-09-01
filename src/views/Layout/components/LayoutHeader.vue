@@ -2,7 +2,7 @@
 
 import { getCategoryAPI } from '@/apis/layout'
 import { onMounted, ref } from 'vue'
-
+//获取分类导航
 const categoryList = ref([])
 const getCategory = async () => {
     const res = await getCategoryAPI()
@@ -21,9 +21,11 @@ onMounted(() => { getCategory() })
                 <li class="home">
                         <RouterLink to="/">首页</RouterLink>
                     </li>
-                <li class="category" v-for="item in categoryList" :key="item.id">
-                    <RouterLink to="/">{{ item.name }}</RouterLink>
-                </li>
+                <li class="home" v-for="item in categoryList" :key="item.id">
+          <RouterLink active-class="active" :to="`/category/${item.id}`">
+            {{ item.name }}
+          </RouterLink>
+        </li>
             </ul>
             <div class="search">
                 <i class="iconfont icon-search"></i>
