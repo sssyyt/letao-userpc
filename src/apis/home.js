@@ -1,6 +1,6 @@
 import httpInstance from '@/utils/http'
 
-
+//获取最新上线商品
 export const findNewAPI = () => {
   return httpInstance({
     url: '/product/new'

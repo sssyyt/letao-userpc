@@ -3,7 +3,7 @@ import { onMounted, ref } from 'vue'
 import { getCategoryoneid } from '@/apis/categoryone'
 import { useRoute } from 'vue-router'
 import { onBeforeRouteUpdate } from 'vue-router'
-
+//通过id获取一级分类数据
 export function useCategoryone() {
   // 获取分类数据
   const categoryone = ref({})

@@ -9,7 +9,7 @@ export function getCategorytwoid(id) {
     })
 }
 
-
+//通过id查询某个分类
 export function getaCategorytwoid(id) {
     return httpInstance({
         url: '/base/category/' + id,
@@ -17,14 +17,14 @@ export function getaCategorytwoid(id) {
 }
 
 
-
-export function getproductCategorytwo(twoCategoryId,page) {
+//通过二级id查询某个二级分类下所有商品（某一页）
+export function getproductCategorytwo(twoCategoryId, page) {
     return httpInstance({
-        url: '/product/spu' ,
+        url: '/product/spu',
         params: {
             twoCategoryId,
             page,
-            pageSize:20
+            pageSize: 20
         }
     })
 }

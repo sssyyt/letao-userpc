@@ -1,7 +1,7 @@
 
 import httpInstance from "@/utils/http"
 
-//所有一级分类
+//返回所有一级分类列表
 export function getCategoryAPI() {
   return httpInstance({
     url: '/base/category'

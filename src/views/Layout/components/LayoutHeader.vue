@@ -1,13 +1,9 @@
 <script setup>
 import { getCategoryAPI } from '@/apis/categoryone'
 import { onMounted, ref } from 'vue'
-//import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { getCategorytwo } from '@/views/CategoryTwo/composables/getaCategorytwo';
-//const { bannerList } = useBanner()
 const { categorytwo } = getCategorytwo()
-// import { toRaw } from '@vue/reactivity'
-//获取分类导航
 const categoryList = ref([])
 
 

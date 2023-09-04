@@ -1,5 +1,8 @@
 <script setup>
-
+import { useUserStore } from '@/stores/userStore'
+//import { useRouter } from 'vue-router'
+const userStore = useUserStore()
+//console.log(13413,userStore.userInfo.data)
 </script>
 
 <template>
@@ -8,8 +11,7 @@
       <ul>
         <!-- 多模版渲染 区分登录状态和非登录状态 -->
 
-        <!-- 适配思路: 登录时显示第一块 非登录时显示第二块  是否有token -->
-        <template v-if="false">
+        <template v-if="userStore.userInfo.data">
           <li><a href="javascript:;"><i class=" iconfont icon-user"></i>{{ userStore.userInfo.account }}</a></li>
           <li>
             <el-popconfirm @confirm="confirm" title="确认退出吗?" confirm-button-text="确认" cancel-button-text="取消">

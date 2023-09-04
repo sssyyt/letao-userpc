@@ -1,29 +1,55 @@
 <script setup>
 // 表单校验（账号名+密码）
-
-import { ref } from 'vue'
+import JSEncrypt from 'jsencrypt'
+import { ref, onMounted } from 'vue'
 import 'element-plus/theme-chalk/el-message.css'
-
+import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/userStore'
+import { getRSA } from '@/apis/user'
+const userStore = useUserStore()
+const rsastring = ref({})
+const getRsastring = async () => {
+    const res = await getRSA()
+    rsastring.value = res
+    //console.log(rsastring.value.data)
+}
+onMounted(() => { getRsastring() })
 // 1. 准备表单对象
 const form = ref({
-    account: '18610848230',
+    phoneNumber: '15640885580',
     password: '123456',
     agree: true
 })
 
+const loginMethod = ref({ method: 'phoneNumber' })
 // 2. 准备规则对象
 const rules = {
-    account: [
-        { required: true, message: '用户名不能为空', trigger: 'blur' }
+    phoneNumber: [
+        {
+            required: true,
+            message: "请输入手机号码",
+            trigger: "blur"
+        },
+        {
+            validator: function (rule, value, callback) {
+                if (/^1[34578]\d{9}$/.test(value) == false) {
+                    callback(new Error("手机号格式错误"));
+                } else {
+                    callback();
+                }
+            },
+            trigger: "blur"
+        }
     ],
     password: [
         { required: true, message: '密码不能为空', trigger: 'blur' },
-        { min: 6, max: 14, message: '密码长度为6-14个字符', trigger: 'blur' },
+        { min: 6, max: 32, message: '密码长度为6-32', trigger: 'blur' },
     ],
     agree: [
         {
             validator: (rule, value, callback) => {
-                console.log(value)
+                //console.log(value)
                 // 自定义校验逻辑
                 // 勾选就通过 不勾选就不通过
                 if (value) {
@@ -38,6 +64,38 @@ const rules = {
 
 
 
+// 3. 获取form实例做统一校验
+const formRef = ref(null)
+const router = useRouter()
+const doLogin = () => {
+    const { phoneNumber, password } = form.value
+    var encrypt = new JSEncrypt();
+    encrypt.setPublicKey(rsastring.value.data);
+    var encrypted = encrypt.encrypt(password);
+    //用rsa公钥对密码进行加密
+    //   console.log(111, phoneNumber);
+    // console.log(222,encrypted);
+    // 调用实例方法
+    formRef.value.validate(async (valid) => {
+        // valid: 所有表单都通过校验  才为true
+        // console.log(valid)
+        // 以valid做为判断条件 如果通过校验才执行登录逻辑
+        if (valid) {
+            // TODO LOGIN
+            //  console.log(111111, phoneNumber);
+            // console.log(222222, encrypted);
+            await userStore.getUserInfo({ phoneNumber, password:encrypted })
+            if (userStore.userInfo.code === 1) {
+                ElMessage({ type: 'success', message: '登录成功' })
+                router.replace({ path: '/' })
+            }
+            else {
+                ElMessage({ type: 'warning', message: userStore.userInfo.msg })
+            }
+        }
+    })
+}
+
 // 1. 用户名和密码 只需要通过简单的配置（看文档的方式 - 复杂功能通过多个不同组件拆解）
 // 2. 同意协议  自定义规则  validator:(rule,value,callback)=>{}
 // 3. 统一校验  通过调用form实例的方法 validate -> true
@@ -50,35 +108,58 @@ const rules = {
                 <h1 class="logo">
                     <RouterLink to="/">乐淘商务</RouterLink>
                 </h1>
-           
-             <div class="router">
-                        <RouterLink class="register" to="/register">
-                                还没有账号，去注册
-                                <i class="iconfont icon-angle-right"></i>
-                                <i class="iconfont icon-angle-right"></i>
-                            </RouterLink>
 
-                        <RouterLink class="entry" to="/">
-                            进入网站首页
-                            <i class="iconfont icon-angle-right"></i>
-                            <i class="iconfont icon-angle-right"></i>
-                        </RouterLink>
-                    </div>
-                    </div>
+                <div class="router">
+                    <RouterLink class="register" to="/register">
+                        还没有账号，去注册
+                        <i class="iconfont icon-angle-right"></i>
+                        <i class="iconfont icon-angle-right"></i>
+                    </RouterLink>
+
+                    <RouterLink class="entry" to="/">
+                        进入网站首页
+                        <i class="iconfont icon-angle-right"></i>
+                        <i class="iconfont icon-angle-right"></i>
+                    </RouterLink>
+                </div>
+            </div>
         </header>
         <section class="login-section">
             <div class="wrapper">
                 <nav>
-                    <a href="javascript:;">账户登录</a>
+                    <a href="javascript:;" @click="loginMethod.method = 'phoneNumber'"
+                        :class="{ active: loginMethod.method === 'phoneNumber' }" class="login-link">账户登录</a>
+                    <a href="javascript:;" @click="loginMethod.method = 'phone'"
+                        :class="{ active: loginMethod.method === 'phone' }" class="login-link">手机验证码登录</a>
                 </nav>
-                <div class="account-box">
-                    <div class="form">
-                        <el-form ref="formRef" :model="form" :rules="rules" label-position="right" label-width="60px"
+
+
+                <div class="phoneNumber-box">
+                    <div v-if="loginMethod.method === 'phoneNumber'" class="form">
+                        <el-form ref="formRef" :model="form" :rules="rules" label-position="right" label-width="90px"
                             status-icon>
-                            <el-form-item prop="account" label="账户">
-                                <el-input v-model="form.account" />
+                            <el-form-item prop="phoneNumber" label="账户">
+                                <el-input v-model="form.phoneNumber" />
                             </el-form-item>
                             <el-form-item prop="password" label="密码">
+                                <el-input v-model="form.password" />
+                            </el-form-item>
+                            <el-form-item prop="agree" label-width="22px">
+                                <el-checkbox size="large" v-model="form.agree">
+                                    我已同意隐私条款和服务条款
+                                </el-checkbox>
+                            </el-form-item>
+                            <el-button size="large" class="subBtn" @click="doLogin">点击登录</el-button>
+                        </el-form>
+                    </div>
+
+                    <div v-if="loginMethod.method === 'phone'" class="form">
+                        <el-form ref="formRef" :model="form" :rules="rules" label-position="right" label-width="90px"
+                            status-icon>
+                            <el-form-item prop="phoneNumber" label="手机号">
+                                <el-input v-model="form.phoneNumber" />
+                            </el-form-item>
+                            <el-form-item prop="password" label="验证码">
                                 <el-input v-model="form.password" />
                             </el-form-item>
                             <el-form-item prop="agree" label-width="22px">
@@ -128,26 +209,38 @@ const rules = {
 
 
         .entry {
-            width: 210px;
+            width: 170px;
             margin-bottom: 8px;
             font-size: 16px;
+            text-align: right;
 
             i {
                 font-size: 14px;
                 color: $letaoColor;
                 letter-spacing: -5px;
             }
+
+            &:hover {
+                color: $letaoColor;
+                border-bottom: 1px solid $letaoColor;
+            }
         }
 
         .register {
-            width: 220px;
+            width: 170px;
             margin-bottom: 35px;
             font-size: 16px;
+            text-align: right;
 
             i {
                 font-size: 14px;
                 color: $letaoColor;
                 letter-spacing: -5px;
+            }
+
+            &:hover {
+                color: $letaoColor;
+                border-bottom: 1px solid $letaoColor;
             }
         }
 
@@ -179,15 +272,15 @@ const rules = {
 
 .login-section {
     background: url('@/assets/images/login-bg2.svg') no-repeat center / cover;
-    height: 488px;
+    height: 558px;
     position: relative;
 
     .wrapper {
-        width: 380px;
+        width: 450px;
         background: #fff;
         position: absolute;
         left: 50%;
-        top: 50px;
+        top: 90px;
         transform: translate3d(100px, 0, 0);
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
 
@@ -197,9 +290,21 @@ const rules = {
             margin-bottom: 20px;
             border-bottom: 1px solid #f5f5f5;
             display: flex;
-            padding: 0 40px;
+            padding: 10px 40px;
             text-align: right;
             align-items: center;
+
+            .login-link {
+                text-decoration: none;
+                padding: 10px 20px;
+                color: #333;
+                transition: background-color 0.3s, color 0.3s;
+            }
+
+            .login-link.active {
+                background-color: $letaoColor;
+                color: #fff;
+            }
 
             a {
                 flex: 1;
@@ -208,6 +313,11 @@ const rules = {
                 font-size: 18px;
                 position: relative;
                 text-align: center;
+
+                .active {
+                    color: $letaoColor;
+                    border-bottom: 1px solid $letaoColor;
+                }
             }
         }
     }
@@ -235,7 +345,7 @@ const rules = {
     }
 }
 
-.account-box {
+.phoneNumber-box {
     .toggle {
         padding: 15px 40px;
         text-align: right;

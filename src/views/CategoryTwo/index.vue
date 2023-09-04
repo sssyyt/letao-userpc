@@ -31,7 +31,7 @@ onMounted(() => getGoodList())
 
 const disabled = ref(false)
 const load = async () => {
-    console.log('加载更多数据咯')
+   // console.log('加载更多数据咯')
     // 获取下一页的数据
     reqData.value.page++
     const res = await getproductCategorytwo(reqData.value.categoryId, reqData.value.page)
@@ -43,7 +43,7 @@ const load = async () => {
     // 加载完毕 停止监听
     if (goodList.value.data.rows.length === 0) {
         disabled.value = true
-        console.log('加载完毕 停止监听')
+       // console.log('加载完毕 停止监听')
     }
 }
 

@@ -2,8 +2,8 @@
 
 import { ref } from 'vue'
 import 'element-plus/theme-chalk/el-message.css'
+import { useRouter } from 'vue-router'
 
-// 1. 准备表单对象
 const form = ref({
     account: "用户tt",
     phoneNumber: "12345678900",
@@ -12,13 +12,26 @@ const form = ref({
     email: "123@qq.com"
 })
 
-// 2. 准备规则对象
 const rules = {
     account: [
         { required: true, message: '用户名不能为空', trigger: 'blur' }
     ],
     phoneNumber: [
-        { required: true, message: '手机号不能为空', trigger: 'blur' }
+          {
+            required: true,
+            message: "请输入手机号码",
+            trigger: "blur"
+        },
+        {
+            validator: function (rule, value, callback) {
+                if (/^1[34578]\d{9}$/.test(value) == false) {
+                    callback(new Error("手机号格式错误"));
+                } else {
+                    callback();
+                }
+            },
+            trigger: "blur"
+        }
     ],
     password: [
         { required: true, message: '密码不能为空', trigger: 'blur' },
@@ -32,13 +45,20 @@ const rules = {
         { required: false, message: '请输入邮箱地址', trigger: 'blur' },
         { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
     ],
-
+    validatePassword(rule, value, callback) {
+        if (value === '') {
+            callback(new Error('请输入密码'));
+        } else {
+            if (value !== this.form.passwordConfirmation) {
+                callback(new Error('密码不匹配'));
+            } else {
+                callback();
+            }
+        }
+    },
     agree: [
         {
             validator: (rule, value, callback) => {
-                console.log(value)
-                // 自定义校验逻辑
-                // 勾选就通过 不勾选就不通过
                 if (value) {
                     callback()
                 } else {
@@ -51,9 +71,25 @@ const rules = {
 
 
 
-// 1. 用户名和密码 只需要通过简单的配置（看文档的方式 - 复杂功能通过多个不同组件拆解）
-// 2. 同意协议  自定义规则  validator:(rule,value,callback)=>{}
-// 3. 统一校验  通过调用form实例的方法 validate -> true
+const formRef = ref(null)
+const router = useRouter()
+const doLogin = () => {
+    const { account, password } = form.value
+    // 调用实例方法
+    formRef.value.validate(async (valid) => {
+        // valid: 所有表单都通过校验  才为true
+        console.log(valid)
+        // 以valid做为判断条件 如果通过校验才执行登录逻辑
+        if (valid) {
+            // TODO LOGIN
+            await userStore.getUserInfo({ account, password })
+            // 1. 提示用户
+            ElMessage({ type: 'success', message: '登录成功' })
+            // 2. 跳转首页
+            router.replace({ path: '/' })
+        }
+    })
+}
 </script>
 
 <template>
@@ -65,10 +101,10 @@ const rules = {
                 </h1>
                 <div class="router">
                     <RouterLink class="login" to="/login">
-                            已有账号，去登录
-                            <i class="iconfont icon-angle-right"></i>
-                            <i class="iconfont icon-angle-right"></i>
-                        </RouterLink>
+                        已有账号，去登录
+                        <i class="iconfont icon-angle-right"></i>
+                        <i class="iconfont icon-angle-right"></i>
+                    </RouterLink>
 
                     <RouterLink class="entry" to="/">
                         进入网站首页
@@ -76,7 +112,7 @@ const rules = {
                         <i class="iconfont icon-angle-right"></i>
                     </RouterLink>
 
-                    
+
                 </div>
             </div>
         </header>
@@ -100,6 +136,18 @@ const rules = {
 
                             <el-form-item prop="password" label="密码">
                                 <el-input v-model="form.password" />
+                            </el-form-item>
+                            <el-form-item prop="passwordConfirmation" label="确认密码"
+                                :rules="[{ validator: validatePassword, trigger: 'blur' }]">
+                                <el-input type="password" v-model="form.passwordConfirmation" />
+                            </el-form-item>
+
+                            <el-form-item prop="gender" label="性别">
+                                <el-select v-model="form.gender" placeholder="请选择性别">
+                                    <el-option label="男" value="男" />
+                                    <el-option label="女" value="女" />
+                                    <el-option label="不填写" value="" />
+                                </el-select>
                             </el-form-item>
 
 
@@ -156,26 +204,38 @@ const rules = {
 
 
         .entry {
-            width: 210px;
+            width: 170px;
             margin-bottom: 8px;
             font-size: 16px;
+            text-align: right;
 
             i {
                 font-size: 14px;
                 color: $letaoColor;
                 letter-spacing: -5px;
             }
+
+            &:hover {
+                color: $letaoColor;
+                border-bottom: 1px solid $letaoColor;
+            }
         }
 
         .login {
-            width: 220px;
+            width: 170px;
             margin-bottom: 35px;
             font-size: 16px;
+            text-align: right;
 
             i {
                 font-size: 14px;
                 color: $letaoColor;
                 letter-spacing: -5px;
+            }
+
+            &:hover {
+                color: $letaoColor;
+                border-bottom: 1px solid $letaoColor;
             }
         }
 
@@ -207,7 +267,7 @@ const rules = {
 
 .register-section {
     background: url('@/assets/images/login-bg2.svg') no-repeat center / cover;
-    height: 488px;
+    height: 558px;
     position: relative;
 
     .wrapper {
@@ -215,7 +275,7 @@ const rules = {
         background: #fff;
         position: absolute;
         left: 50%;
-        top: 50px;
+        top: 25px;
         transform: translate3d(100px, 0, 0);
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
 
@@ -385,4 +445,5 @@ const rules = {
     background: $letaoColor;
     width: 100%;
     color: #fff;
-}</style>
+}
+</style>

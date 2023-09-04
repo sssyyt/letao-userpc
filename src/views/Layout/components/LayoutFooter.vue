@@ -40,7 +40,7 @@
                         <a href="javascript:;">售后服务</a>
     
                     </p>
-                    <p>CopyRight © 小兔鲜儿</p>
+                    <p>CopyRight © 乐淘商务 </p>
                 </div>
             </div>
         </div>
