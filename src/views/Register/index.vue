@@ -1,14 +1,15 @@
 <script setup>
-// 表单校验（账号名+密码）
 
 import { ref } from 'vue'
 import 'element-plus/theme-chalk/el-message.css'
 
 // 1. 准备表单对象
 const form = ref({
-    account: '18610848230',
-    password: '123456',
-    agree: true
+    account: "用户tt",
+    phoneNumber: "12345678900",
+    password: "123456",
+    sex: "1",
+    email: "123@qq.com"
 })
 
 // 2. 准备规则对象
@@ -16,10 +17,22 @@ const rules = {
     account: [
         { required: true, message: '用户名不能为空', trigger: 'blur' }
     ],
+    phoneNumber: [
+        { required: true, message: '手机号不能为空', trigger: 'blur' }
+    ],
     password: [
         { required: true, message: '密码不能为空', trigger: 'blur' },
-        { min: 6, max: 14, message: '密码长度为6-14个字符', trigger: 'blur' },
+        { min: 6, max: 32, message: '密码长度为6-32个字符', trigger: 'blur' },
     ],
+    sex: [
+        { required: false, message: '密码不能为空', trigger: 'blur' },
+        { min: 6, max: 32, message: '密码长度为6-32个字符', trigger: 'blur' },
+    ],
+    email: [
+        { required: false, message: '请输入邮箱地址', trigger: 'blur' },
+        { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+    ],
+
     agree: [
         {
             validator: (rule, value, callback) => {
@@ -45,55 +58,70 @@ const rules = {
 
 <template>
     <div>
-        <header class="login-header">
+        <header class="register-header">
             <div class="container m-top-20">
                 <h1 class="logo">
                     <RouterLink to="/">乐淘商务</RouterLink>
                 </h1>
-           
-             <div class="router">
-                        <RouterLink class="register" to="/register">
-                                还没有账号，去注册
-                                <i class="iconfont icon-angle-right"></i>
-                                <i class="iconfont icon-angle-right"></i>
-                            </RouterLink>
-
-                        <RouterLink class="entry" to="/">
-                            进入网站首页
+                <div class="router">
+                    <RouterLink class="login" to="/login">
+                            已有账号，去登录
                             <i class="iconfont icon-angle-right"></i>
                             <i class="iconfont icon-angle-right"></i>
                         </RouterLink>
-                    </div>
-                    </div>
+
+                    <RouterLink class="entry" to="/">
+                        进入网站首页
+                        <i class="iconfont icon-angle-right"></i>
+                        <i class="iconfont icon-angle-right"></i>
+                    </RouterLink>
+
+                    
+                </div>
+            </div>
         </header>
-        <section class="login-section">
+        <section class="register-section">
             <div class="wrapper">
                 <nav>
-                    <a href="javascript:;">账户登录</a>
+                    <a href="javascript:;">账户注册</a>
                 </nav>
                 <div class="account-box">
                     <div class="form">
-                        <el-form ref="formRef" :model="form" :rules="rules" label-position="right" label-width="60px"
+                        <el-form ref="formRef" :model="form" :rules="rules" label-position="right" label-width="69px"
                             status-icon>
-                            <el-form-item prop="account" label="账户">
+
+                            <el-form-item prop="account" label="用户名">
                                 <el-input v-model="form.account" />
                             </el-form-item>
+
+                            <el-form-item prop="phoneNumber" label="手机号">
+                                <el-input v-model="form.phoneNumber" />
+                            </el-form-item>
+
                             <el-form-item prop="password" label="密码">
                                 <el-input v-model="form.password" />
                             </el-form-item>
-                            <el-form-item prop="agree" label-width="22px">
+
+
+                            <el-form-item prop="email" label="邮箱">
+                                <el-input v-model="form.email" />
+                            </el-form-item>
+
+                            <el-form-item prop="agree" label-width="46px">
                                 <el-checkbox size="large" v-model="form.agree">
                                     我已同意隐私条款和服务条款
                                 </el-checkbox>
                             </el-form-item>
-                            <el-button size="large" class="subBtn" @click="doLogin">点击登录</el-button>
+
+
+                            <el-button size="large" class="subBtn" @click="doLogin">点击注册</el-button>
                         </el-form>
                     </div>
                 </div>
             </div>
         </section>
 
-        <footer class="login-footer">
+        <footer class="register-footer">
             <div class="container">
                 <p>
                     <a href="javascript:;">关于我们</a>
@@ -107,7 +135,7 @@ const rules = {
 </template>
 
 <style scoped lang='scss'>
-.login-header {
+.register-header {
     background: #fff;
     border-bottom: 1px solid #e4e4e4;
 
@@ -139,7 +167,7 @@ const rules = {
             }
         }
 
-        .register {
+        .login {
             width: 220px;
             margin-bottom: 35px;
             font-size: 16px;
@@ -177,7 +205,7 @@ const rules = {
 
 }
 
-.login-section {
+.register-section {
     background: url('@/assets/images/login-bg2.svg') no-repeat center / cover;
     height: 488px;
     position: relative;
@@ -213,7 +241,7 @@ const rules = {
     }
 }
 
-.login-footer {
+.register-footer {
     padding: 30px 0 50px;
     background: #fff;
 
@@ -357,5 +385,4 @@ const rules = {
     background: $letaoColor;
     width: 100%;
     color: #fff;
-}
-</style>
+}</style>

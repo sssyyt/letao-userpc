@@ -5,6 +5,8 @@ defineProps({
     default: () => { }
   }
 })
+
+
 </script>
 
 
@@ -13,18 +15,23 @@ defineProps({
     <img v-img-lazy="goods.spuImage" alt="" />
     <p class="name ellipsis">{{ goods.spuName }}</p>
     <p class="desc ellipsis">{{ goods.descript }}</p>
-    <p class="price">&yen;{{ goods.priceHigh }}</p>
+    <p class="price" v-if="goods.priceLow === goods.priceHigh">
+      &yen;{{ goods.priceLow }}
+    </p>
+    <p class="price" v-else>
+      &yen;{{ goods.priceLow }} ~ {{ goods.priceHigh }}
+    </p>
   </RouterLink>
 </template>
 
 <style lang="scss" scoped>
 .goods-item {
-  display: block;
+  display: inline-block;
   width: 250px;
   padding: 20px 10px;
   text-align: center;
   transition: all .5s;
-   background-color: #fff;
+  background-color: #fff;
 
   &:hover {
     transform: translate3d(0, -3px, 0);

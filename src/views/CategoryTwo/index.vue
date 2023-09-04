@@ -1,7 +1,8 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, toRaw } from 'vue';
 import { useRoute } from 'vue-router'
 import { onMounted } from 'vue';
+import GoodsItem from '../Home/components/GoodsItem.vue';
 import { getproductCategorytwo } from '@/apis/categorytwo'
 import { getCategorytwo } from './composables/getaCategorytwo'
 //const { bannerList } = useBanner()
@@ -9,19 +10,43 @@ const { categorytwo } = getCategorytwo()
 const route = useRoute()
 
 // 获取基础列表数据渲染
-const goodList = ref([])
+const goodList = ref({})
 const reqData = ref({
     categoryId: route.params.id,
     page: 1,
     pageSize: 20,
 })
-
+const productlist=ref([])
 const getGoodList = async () => {
     const res = await getproductCategorytwo(reqData.value.categoryId, reqData.value.page)
-    goodList.value = res.data
+    goodList.value = res
+    var te=toRaw(goodList)
+    productlist.value = te.value.data.rows
 
 }
+
+
 onMounted(() => getGoodList())
+
+
+const disabled = ref(false)
+const load = async () => {
+    console.log('加载更多数据咯')
+    // 获取下一页的数据
+    reqData.value.page++
+    const res = await getproductCategorytwo(reqData.value.categoryId, reqData.value.page)
+
+    goodList.value = res
+    console.log(goodList.value.data.rows.length)
+
+    productlist.value = [...productlist.value, ...goodList.value.data.rows]
+    // 加载完毕 停止监听
+    if (goodList.value.data.rows.length === 0) {
+        disabled.value = true
+        console.log('加载完毕 停止监听')
+    }
+}
+
 
 </script>
 
@@ -36,9 +61,9 @@ onMounted(() => getGoodList())
                 <el-breadcrumb-item>{{ categorytwo.name }}</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
-        <div class="body">``
-            <p>商品列表</p>
-            <GoodsItem v-for="goods in goodList.rows" :goods="goods" :key="goods.id" />
+         <p>商品列表 </p>
+        <div class="body" v-infinite-scroll="load" :infinite-scroll-disabled="disabled">
+            <GoodsItem v-for="goods in productlist" :goods="goods" :key="goods.id" />
         </div>
     </div>
 </template>
@@ -49,55 +74,15 @@ onMounted(() => getGoodList())
 .bread-container {
     padding: 25px 0;
     color: #666;
+     display: flex;
 }
 
-.sub-container {
-    padding: 20px 10px;
-    background-color: #fff;
 
     .body {
         display: flex;
         flex-wrap: wrap;
-        padding: 0 10px;
+        padding: 20px 100px;
     }
 
-    .goods-item {
-        display: block;
-        width: 220px;
-        margin-right: 20px;
-        padding: 20px 30px;
-        text-align: center;
-
-        img {
-            width: 160px;
-            height: 160px;
-        }
-
-        p {
-            padding-top: 10px;
-        }
-
-        .name {
-            font-size: 16px;
-        }
-
-        .desc {
-            color: #999;
-            height: 29px;
-        }
-
-        .price {
-            color: $priceColor;
-            font-size: 20px;
-        }
-    }
-
-    .pagination-container {
-        margin-top: 20px;
-        display: flex;
-        justify-content: center;
-    }
-
-
-}
+   
 </style>

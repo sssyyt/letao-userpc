@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // 创建axios实例
 const httpInstance = axios.create({
-    baseURL: 'http://42d900e8.r3.cpolar.cn',
+    baseURL: 'http://d7ccab8.r7.cpolar.top',
     timeout: 5000
 })
 

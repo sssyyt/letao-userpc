@@ -7,7 +7,7 @@ export function getCategoryAPI() {
     url: '/base/category'
   })
 }
-//通过id查询某个一级分类
+//通过id查询某个分类
 export function getCategoryoneid(id) {
   return httpInstance({
     url: '/base/category/' + id,

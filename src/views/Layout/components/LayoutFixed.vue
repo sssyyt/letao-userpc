@@ -1,6 +1,5 @@
 <script setup>
 import LayoutHeader from './LayoutHeader.vue'
-// vueUse
 import { useScroll } from '@vueuse/core'
 const { y } = useScroll(window)
 

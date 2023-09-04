@@ -5,11 +5,12 @@ import { findNewAPI } from '@/apis/home'
 import { onMounted, ref } from 'vue'
 
 // 获取数据
-const newList = ref([])
+const newList = ref({})
 
 const getNewList = async () => {
   const res = await findNewAPI()
   newList.value = res
+
 }
 
 onMounted(() => getNewList())

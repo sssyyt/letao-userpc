@@ -1,33 +1,55 @@
 <script setup>
 import { getCategoryAPI } from '@/apis/categoryone'
 import { onMounted, ref } from 'vue'
+//import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+import { getCategorytwo } from '@/views/CategoryTwo/composables/getaCategorytwo';
+//const { bannerList } = useBanner()
+const { categorytwo } = getCategorytwo()
+// import { toRaw } from '@vue/reactivity'
 //获取分类导航
 const categoryList = ref([])
+
+
 const getCategory = async () => {
     const res = await getCategoryAPI()
     categoryList.value = res.data
 }
+const route = useRoute();
 onMounted(() => { getCategory() })
+
+const linkClasses = (itemId, idtwo = route.params.id) => {
+
+    const isActive =
+        route.path === `/category/${itemId}` ||
+        (route.path === `/category/sub/${idtwo}` && `${categorytwo.value.parentId}` === `${itemId}`);
+
+    return {
+        active: isActive,
+    };
+};
+
+
 </script>
 
 <template>
     <header class='app-header'>
         <div class="container">
             <h1 class="logo">
-                <RouterLink to="/">小兔鲜</RouterLink>
+                <RouterLink to="/">letao</RouterLink>
             </h1>
             <ul class="app-header-nav">
                 <li class="home">
                     <RouterLink to="/">首页</RouterLink>
                 </li>
                 <li class="home" v-for="item in categoryList" :key="item.id">
-                    <RouterLink active-class="active" :to="`/category/${item.id}`">
+                    <RouterLink :to="`/category/${item.id}`" :class="linkClasses(item.id)">
                         {{ item.name }}
                     </RouterLink>
                 </li>
-                 <li class="home">
-                        <RouterLink to="/category/miaosha">秒杀专区</RouterLink>
-                    </li>
+                <li class="home">
+                    <RouterLink to="/category/miaosha">秒杀专区</RouterLink>
+                </li>
             </ul>
             <div class="search">
                 <i class="iconfont icon-search"></i>
