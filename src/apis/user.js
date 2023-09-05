@@ -9,11 +9,11 @@ export function getRSA() {
 
 //校验后获取用户信息
 export function getUserInfo() {
- // console.log('getUserInfo开始')
+  // console.log('getUserInfo开始')
   return request({
     url: '/user'
   })
-  
+
 }
 
 //获取手机登录验证码
@@ -26,14 +26,21 @@ export function getCaptcha(phoneNumber) {
   })
 }
 
+
 //注册接口
-// export function postRegister() {
-//   return request({
-//     url: '/user'
-//   })
-
-// }
-
+export const postRegister = ({ account, phoneNumber, password, sex, email }) => {
+  return request({
+    url: '/user/register',
+    method: 'POST',
+    data: {
+      account,
+      phoneNumber,
+      password,
+      sex,
+      email
+    }
+  })
+}
 //登录获取token
 export const loginAPI = ({ phoneNumber, password }) => {
   return request({

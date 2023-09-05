@@ -1,15 +1,27 @@
 <script setup>
 
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import 'element-plus/theme-chalk/el-message.css'
 import { useRouter } from 'vue-router'
-
+import { ElMessage } from 'element-plus'
+import { postRegister } from '@/apis/user'
+import JSEncrypt from 'jsencrypt'
+import { getRSA } from '@/apis/user'
+const rsastring = ref({})
+const getRsastring = async () => {
+    const res = await getRSA()
+    rsastring.value = res
+    //console.log(rsastring.value.data)
+}
+onMounted(() => { getRsastring() })
 const form = ref({
-    account: "用户tt",
-    phoneNumber: "12345678900",
-    password: "123456",
-    sex: "1",
-    email: "123@qq.com"
+    account: "默认name",
+    phoneNumber: "18362280000",
+    password: "112233",
+    passwordConfirmation:'112233',
+    sex: "0",
+    email: "123@qq.com",
+    agree: true
 })
 
 const rules = {
@@ -38,57 +50,64 @@ const rules = {
         { min: 6, max: 32, message: '密码长度为6-32个字符', trigger: 'blur' },
     ],
     sex: [
-        { required: false, message: '密码不能为空', trigger: 'blur' },
-        { min: 6, max: 32, message: '密码长度为6-32个字符', trigger: 'blur' },
+        { required: false, trigger: 'blur' },
     ],
     email: [
         { required: false, message: '请输入邮箱地址', trigger: 'blur' },
         { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
     ],
-    validatePassword(rule, value, callback) {
-        if (value === '') {
-            callback(new Error('请输入密码'));
-        } else {
-            if (value !== this.form.passwordConfirmation) {
-                callback(new Error('密码不匹配'));
+    passwordConfirmation: [
+        { required: true, message: '请确认密码', trigger: 'blur' },
+        { min: 6, max: 32, message: '密码长度为6-32个字符', trigger: 'blur' },
+        ],
+agree: [
+    {
+        validator: (rule, value, callback) => {
+            if (value) {
+                callback()
             } else {
-                callback();
+                callback(new Error('请勾选协议'))
             }
         }
-    },
-    agree: [
-        {
-            validator: (rule, value, callback) => {
-                if (value) {
-                    callback()
-                } else {
-                    callback(new Error('请勾选协议'))
-                }
-            }
-        }
-    ]
+    }
+]
 }
 
 
 
 const formRef = ref(null)
 const router = useRouter()
-const doLogin = () => {
-    const { account, password } = form.value
-    // 调用实例方法
-    formRef.value.validate(async (valid) => {
-        // valid: 所有表单都通过校验  才为true
-       // console.log(valid)
-        // 以valid做为判断条件 如果通过校验才执行登录逻辑
-        if (valid) {
-            // TODO LOGIN
-            await userStore.getUserToken({ account, password })
-            // 1. 提示用户
-            ElMessage({ type: 'success', message: '登录成功' })
-            // 2. 跳转首页
-            router.replace({ path: '/' })
-        }
-    })
+const rcode = ref(0)
+
+const doRegister = () => {
+    const { account, phoneNumber, password, passwordConfirmation, sex, email } = form.value
+
+    if (passwordConfirmation === password) {
+        var encrypt = new JSEncrypt();
+        encrypt.setPublicKey(rsastring.value.data);
+        var encrypted = encrypt.encrypt(password);
+        // 调用实例方法
+        formRef.value.validate(async (valid) => {
+            if (valid) {
+                const res = await postRegister({ account, phoneNumber, password: encrypted, sex, email })
+                rcode.value = res
+              //  console.log(82173, rcode.value)
+                if (rcode.value.code === 1) {
+                    ElMessage({ type: 'success', message: '注册成功' })
+                    router.replace({ path: '/login' })
+                }
+                 if (rcode.value.code === 0) {
+                    ElMessage({ type: 'warning', message: rcode.value.msg })
+
+                }
+            }
+           
+        })
+    }
+     else {
+        ElMessage({ type: 'warning', message: '确认密码与原密码不匹配' })
+
+    }
 }
 </script>
 
@@ -123,36 +142,34 @@ const doLogin = () => {
                 </nav>
                 <div class="account-box">
                     <div class="form">
-                        <el-form ref="formRef" :model="form" :rules="rules" label-position="right" label-width="69px"
+                        <el-form ref="formRef" :model="form" :rules="rules" label-position="right" label-width="82px"
                             status-icon>
 
                             <el-form-item prop="account" label="用户名">
-                                <el-input v-model="form.account" />
+                                <el-input v-model="form.account" clearable/>
                             </el-form-item>
 
                             <el-form-item prop="phoneNumber" label="手机号">
-                                <el-input v-model="form.phoneNumber" />
+                                <el-input v-model="form.phoneNumber" clearable/>
                             </el-form-item>
 
                             <el-form-item prop="password" label="密码">
-                                <el-input v-model="form.password" />
+                                <el-input v-model="form.password" clearable/>
                             </el-form-item>
-                            <el-form-item prop="passwordConfirmation" label="确认密码"
-                                :rules="[{ validator: validatePassword, trigger: 'blur' }]">
-                                <el-input type="password" v-model="form.passwordConfirmation" />
+                            <el-form-item prop="passwordConfirmation" label="确认密码">
+                                <el-input type="password" v-model="form.passwordConfirmation" clearable/>
                             </el-form-item>
 
-                            <el-form-item prop="gender" label="性别">
-                                <el-select v-model="form.gender" placeholder="请选择性别">
-                                    <el-option label="男" value="男" />
-                                    <el-option label="女" value="女" />
-                                    <el-option label="不填写" value="" />
+                            <el-form-item prop="sex" label="性别">
+                                <el-select v-model="form.sex" placeholder="请选择性别">
+                                    <el-option label="男" value="1" />
+                                    <el-option label="女" value="0" />
                                 </el-select>
                             </el-form-item>
 
 
                             <el-form-item prop="email" label="邮箱">
-                                <el-input v-model="form.email" />
+                                <el-input v-model="form.email" clearable/>
                             </el-form-item>
 
                             <el-form-item prop="agree" label-width="46px">
@@ -162,7 +179,7 @@ const doLogin = () => {
                             </el-form-item>
 
 
-                            <el-button size="large" class="subBtn" @click="doLogin">点击注册</el-button>
+                            <el-button size="large" class="subBtn" @click="doRegister">点击注册</el-button>
                         </el-form>
                     </div>
                 </div>
@@ -285,7 +302,7 @@ const doLogin = () => {
             margin-bottom: 20px;
             border-bottom: 1px solid #f5f5f5;
             display: flex;
-            padding: 0 40px;
+            padding: 0 50px;
             text-align: right;
             align-items: center;
 
