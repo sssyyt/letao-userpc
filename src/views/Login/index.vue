@@ -7,6 +7,7 @@ import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
 import { getRSA } from '@/apis/user'
+import { getCaptcha } from '@/apis/user'
 const userStore = useUserStore()
 const rsastring = ref({})
 const getRsastring = async () => {
@@ -22,8 +23,15 @@ const form = ref({
     agree: true
 })
 
+const formtwo = ref({
+    phoneNumber: '18362285009',
+    captcha: '',
+    agree: true
+})
+
+const msgCaptcha = ref(0);
+
 const loginMethod = ref({ method: 'phoneNumber' })
-// 2. 准备规则对象
 const rules = {
     phoneNumber: [
         {
@@ -49,9 +57,6 @@ const rules = {
     agree: [
         {
             validator: (rule, value, callback) => {
-                //console.log(value)
-                // 自定义校验逻辑
-                // 勾选就通过 不勾选就不通过
                 if (value) {
                     callback()
                 } else {
@@ -61,36 +66,125 @@ const rules = {
         }
     ]
 }
+const validatePhoneNumber = (value) => {
+    return /^1[34578]\d{9}$/.test(value);
+};
+
+const rulestwo = {
+    phoneNumber: [
+        {
+            required: true,
+            message: "请输入手机号码",
+            trigger: "blur"
+        },
+        {
+            validator: function (rule, value, callback) {
+                if (/^1[34578]\d{9}$/.test(value) == false) {
+                    callback(new Error("手机号格式错误"));
+                } else {
+                    callback();
+                }
+            },
+            trigger: "blur"
+        }
+    ],
+    captcha: [
+        { required: true, message: '验证码不能为空', trigger: 'blur' },
+        { min: 6, max: 6, message: '验证码长度为6', trigger: 'blur' },
+    ],
+    agree: [
+        {
+            validator: (rule, value, callback) => {
+                if (value) {
+                    callback()
+                } else {
+                    callback(new Error('请勾选协议'))
+                }
+            }
+        }
+    ]
+}
+const countdown = ref(0);
+
+const getVerificationCode = async () => {
+    // 在这里触发获取验证码的逻辑，向服务器请求验证码
+    const { phoneNumber } = formtwo.value
+    if (validatePhoneNumber(phoneNumber)) {
+        const res = await getCaptcha(phoneNumber)
+        countdown.value = 300;
+
+        // 启动定时器，每秒减少倒计时
+        const timer = setInterval(() => {
+            if (countdown.value > 0) {
+                countdown.value--;
+            } else {
+                clearInterval(timer); // 清除定时器
+            }
+        }, 1000);
+
+        msgCaptcha.value = res
+
+        if (msgCaptcha.value.code === 1)
+            ElMessage({ type: 'success', message: '验证码发送成功' })
+
+        if (msgCaptcha.value.code === 0)
+            ElMessage({ type: 'warning', message: msgCaptcha.value.msg })
+    }
+    else
+        ElMessage({
+            type: 'warning',
+            message: '手机号格式错误，发送验证码失败'
+
+        })
+
+}
 
 
 
 // 3. 获取form实例做统一校验
 const formRef = ref(null)
+const formtwoRef = ref(null)
+
 const router = useRouter()
 const doLogin = () => {
     const { phoneNumber, password } = form.value
     var encrypt = new JSEncrypt();
     encrypt.setPublicKey(rsastring.value.data);
     var encrypted = encrypt.encrypt(password);
-    //用rsa公钥对密码进行加密
-    //   console.log(111, phoneNumber);
-    // console.log(222,encrypted);
-    // 调用实例方法
+
     formRef.value.validate(async (valid) => {
-        // valid: 所有表单都通过校验  才为true
-        // console.log(valid)
-        // 以valid做为判断条件 如果通过校验才执行登录逻辑
         if (valid) {
-            // TODO LOGIN
-            //  console.log(111111, phoneNumber);
-            // console.log(222222, encrypted);
-            await userStore.getUserInfo({ phoneNumber, password:encrypted })
-            if (userStore.userInfo.code === 1) {
+            await userStore.getUserToken({ phoneNumber, password: encrypted })
+            // console.log('await getUserToken')
+            if (userStore.userToken.code === 1) {
                 ElMessage({ type: 'success', message: '登录成功' })
+                //console.log('登录成功')
+                await userStore.getUserData()
+                //console.log('getUserData成功 准备跳转到首页')
+
                 router.replace({ path: '/' })
             }
             else {
-                ElMessage({ type: 'warning', message: userStore.userInfo.msg })
+                ElMessage({ type: 'warning', message: userStore.userToken.msg })
+            }
+        }
+    })
+}
+
+
+const doLogintwo = () => {
+    const { phoneNumber, captcha } = formtwo.value
+    
+    formtwoRef.value.validate(async (valid) => {
+        if (valid) {
+            await userStore.getUserTokentwo({ phoneNumber, code: captcha })
+            if (userStore.userToken.code === 1) {
+                ElMessage({ type: 'success', message: '登录成功' })
+                await userStore.getUserData()
+                router.replace({ path: '/' })
+            }
+            else {
+                ElMessage({ type: 'warning', message: userStore.userToken.msg })
             }
         }
     })
@@ -132,17 +226,15 @@ const doLogin = () => {
                     <a href="javascript:;" @click="loginMethod.method = 'phone'"
                         :class="{ active: loginMethod.method === 'phone' }" class="login-link">手机验证码登录</a>
                 </nav>
-
-
                 <div class="phoneNumber-box">
                     <div v-if="loginMethod.method === 'phoneNumber'" class="form">
                         <el-form ref="formRef" :model="form" :rules="rules" label-position="right" label-width="90px"
                             status-icon>
                             <el-form-item prop="phoneNumber" label="账户">
-                                <el-input v-model="form.phoneNumber" />
+                                <el-input v-model="form.phoneNumber" clearable />
                             </el-form-item>
                             <el-form-item prop="password" label="密码">
-                                <el-input v-model="form.password" />
+                                <el-input v-model="form.password" clearable />
                             </el-form-item>
                             <el-form-item prop="agree" label-width="22px">
                                 <el-checkbox size="large" v-model="form.agree">
@@ -154,22 +246,34 @@ const doLogin = () => {
                     </div>
 
                     <div v-if="loginMethod.method === 'phone'" class="form">
-                        <el-form ref="formRef" :model="form" :rules="rules" label-position="right" label-width="90px"
-                            status-icon>
+                        <el-form ref="formtwoRef" :model="formtwo" :rules="rulestwo" label-position="right"
+                            label-width="90px" status-icon>
+                            <div class="note"> 如果该手机号还未注册，将自动注册一个账户 </div>
+
                             <el-form-item prop="phoneNumber" label="手机号">
-                                <el-input v-model="form.phoneNumber" />
+                                <el-input v-model="formtwo.phoneNumber" clearable />
                             </el-form-item>
-                            <el-form-item prop="password" label="验证码">
-                                <el-input v-model="form.password" />
+
+                            <el-form-item prop="captcha" label="验证码" class="input-button-container">
+                                <div class="input-button-wrapper">
+                                    <el-input v-model="formtwo.captcha" class="input-field" clearable />
+                                    <el-button size="large" class="getCodeBtn" :disabled="countdown > 0"
+                                        @click="getVerificationCode">
+                                        {{ countdown > 0 ? `${countdown} 秒后重新获取` : '获取验证码' }}
+                                    </el-button>
+                                </div>
                             </el-form-item>
+
+
                             <el-form-item prop="agree" label-width="22px">
-                                <el-checkbox size="large" v-model="form.agree">
+                                <el-checkbox size="large" v-model="formtwo.agree">
                                     我已同意隐私条款和服务条款
                                 </el-checkbox>
                             </el-form-item>
-                            <el-button size="large" class="subBtn" @click="doLogin">点击登录</el-button>
+                            <el-button size="large" class="subBtn" @click="doLogintwo">点击登录</el-button>
                         </el-form>
                     </div>
+
                 </div>
             </div>
         </section>
@@ -361,6 +465,32 @@ const doLogin = () => {
 
     .form {
         padding: 0 20px 20px 20px;
+
+        .input-button-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .input-button-wrapper {
+            display: flex;
+            flex-grow: 1;
+            /* 允许输入框和按钮扩展并填充容器 */
+            align-items: center;
+        }
+
+        .input-field {
+            flex-grow: 1;
+            /* 允许输入框占据包裹器中的剩余空间 */
+            margin-right: 10px;
+            /* 在输入框右侧添加一些间距，与按钮分隔开 */
+        }
+
+
+        .note {
+            text-align: center;
+            color: gray;
+            margin-bottom: 20px;
+        }
 
         &-item {
             margin-bottom: 28px;

@@ -37,7 +37,7 @@ const load = async () => {
     const res = await getproductCategorytwo(reqData.value.categoryId, reqData.value.page)
 
     goodList.value = res
-    console.log(goodList.value.data.rows.length)
+   // console.log(goodList.value.data.rows.length)
 
     productlist.value = [...productlist.value, ...goodList.value.data.rows]
     // 加载完毕 停止监听

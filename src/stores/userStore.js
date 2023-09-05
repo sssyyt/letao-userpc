@@ -3,32 +3,48 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { loginAPI } from '@/apis/user'
-// import { useCartStore } from './cartStore'
-// import { mergeCartAPI } from '@/apis/cart'
+import { mloginAPI } from '@/apis/user'
+import { getUserInfo } from '@/apis/user'
+
 export const useUserStore = defineStore('user', () => {
-  //const cartStore = useCartStore()
-  // 1. 定义管理用户数据的state
-  const userInfo = ref({})
-  // 2. 定义获取接口数据的action函数
-  const getUserInfo = async ({ phoneNumber, password }) => {
-    // console.log(111111111, phoneNumber);
-    // console.log(222222222, password);
+
+
+  const userToken = ref({})
+  const getUserToken = async ({ phoneNumber, password }) => {
+
     const res = await loginAPI({ phoneNumber, password })
-    userInfo.value = res
-   // console.log(1223, userInfo.value)
-    // 合并购物车的操作
-    //  
+    userToken.value = res
   }
+
+  const getUserTokentwo = async ({ phoneNumber, code }) => {
+
+    const res = await mloginAPI({ phoneNumber, code })
+    userToken.value = res
+  }
+  const userInfo = ref({})
+
+
+  const getUserData = async () => {
+    //console.log('get user info')
+
+    const res = await getUserInfo()
+    // console.log(222, res)
+    userInfo.value = res
+
+  }
+
   // 退出时清除用户信息
   const clearUserInfo = () => {
+    userToken.value = {}
     userInfo.value = {}
-    // 执行清除购物车的action
-  //  cartStore.clearCart()
   }
   // 3. 以对象的格式把state和action return
   return {
+    userToken,
     userInfo,
-    getUserInfo,
+    getUserToken,
+    getUserTokentwo,
+    getUserData,
     clearUserInfo
   }
 }, {
