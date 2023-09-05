@@ -14,3 +14,15 @@ export function getCategoryoneid(id) {
   })
 }
 
+export function getproductCategoryone(oneCategoryId, page) {
+  //console.log('  getproductCategoryone  ', oneCategoryId, page);
+  return httpInstance({
+    url: '/product/spu',
+    params: {
+      oneCategoryId,
+      page,
+      pageSize: 20
+    }
+  })
+}
+

@@ -2,11 +2,19 @@
 
 //import GoodsItem from '../Home/components/GoodsItem.vue'
 //import { useBanner } from './composables/useBanner'
-import { useCategoryone } from './composables/useCategoryone'
+import { useCategoryone , useCategoryoneproduct } from './composables/useCategoryone'
 import { useCategorytwo } from './composables/useCategorytwo'
 //const { bannerList } = useBanner()
+// import {  ref } from 'vue'
+// import {  getproductCategoryone } from '@/apis/categoryone'
+
+import GoodsItem from '../Home/components/GoodsItem.vue';
 const { categoryone } = useCategoryone()
 const { categorytwo } = useCategorytwo()
+const {  disabled,load,productlist } = useCategoryoneproduct()
+
+
+
 </script>
 
 <template>
@@ -33,6 +41,13 @@ const { categorytwo } = useCategorytwo()
                 </li>
             </ul>
         </div>
+
+          <div class="sub-list">
+               <h3>商品列表 </h3>
+            <div class="body" v-infinite-scroll="load" :infinite-scroll-disabled="disabled">
+                <GoodsItem v-for="goods in productlist" :goods="goods" :key="goods.id" />
+            </div>
+            </div>
     </div>
 </template>
 
