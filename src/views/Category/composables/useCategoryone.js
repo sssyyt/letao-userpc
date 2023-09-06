@@ -39,7 +39,7 @@ export function useCategoryoneproduct() {
   const disabled = ref(false)
   const load = async () => {
     reqData.value.page++
-    console.log(reqData.value.page);
+   // console.log(reqData.value.page);
     const res = await getproductCategoryone(reqData.value.categoryId, reqData.value.page)
     goodList.value = res
     productlist.value = [...productlist.value, ...goodList.value.data.rows]
@@ -50,7 +50,7 @@ export function useCategoryoneproduct() {
     }
   }
   const productlist = ref([])
-  const getGoodList = async ({ oneCategoryId = reqData.value.categoryId, page = reqData.value.page }) => {
+  const getGoodList = async ({ oneCategoryId, page } = { oneCategoryId: reqData.value.categoryId, page : reqData.value.page }) => {
     // console.log(reqData.value.categoryId,reqData.value.page, '     重新调用接口       ')
     const res = await getproductCategoryone(oneCategoryId, page)
     goodList.value = res
@@ -69,7 +69,7 @@ export function useCategoryoneproduct() {
       reqData.value.categoryId = newValue.id
       //console.log(124314,newValue.id);
       reqData.value.page = 1
-      getGoodList({ id: newValue, page: reqData.value.page })
+      getGoodList({ oneCategoryId: newValue.id, page: reqData.value.page })
     },
     { immediate: true }
   )

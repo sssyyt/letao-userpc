@@ -5,7 +5,9 @@
   <div class="home-banner">
     <el-carousel height="500px">
       <el-carousel-item v-for="index in 5" :key="index">
-        <img :src="`https://seu-letao.oss-cn-beijing.aliyuncs.com/banner/${index}.png`" alt="">
+        <router-link :to="`/category/${index}`">
+          <img :src="`https://seu-letao.oss-cn-beijing.aliyuncs.com/banner/${index}.png`" alt="">
+        </router-link>
       </el-carousel-item>
     </el-carousel>
   </div>
