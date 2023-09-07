@@ -1,37 +1,92 @@
+//todo视频预览
+//评价显示以及锚点
 <script setup>
 import { getSKU } from '@/apis/skuget'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import  imageview from '/Users/shiyutian/letao/letao_userpc/src/components/ImageView/index.vue'
+import imageview from '/Users/shiyutian/letao/letao_userpc/src/components/ImageView/index.vue'
+import Sku from '/Users/shiyutian/letao/letao_userpc/src/components/Sku/index.vue'
 const skus = ref({})
+
+const skuList = ref([])
+
+//选择的sku对象
+const skuObj = ref({})
+
+
 const route = useRoute()
+//展示商品名称
 const title = ref({})
+//展示图片
 const showimagelist = ref([])
+//获取分类名称和id
+const conename = ref({})
+const ctwoname = ref({})
+const coneid = ref({})
+const ctwoid = ref({})
+//const spudescript = ref({})
+
+//获取评论数以及销量
+const commentnum = ref({})
+const salesnum = ref({})
+
+
+//const title = ref({})
+//获取商品信息和提取各个参数
 const getSKUs = async () => {
   const res = await getSKU(route.params.id)
   skus.value = res.data
-  console.log(skus.value);
+  console.log('sku参数', skus.value);
+  //给各个参数赋值
   title.value = skus.value.spuName
+  conename.value = skus.value.oneCategoryName
+  ctwoname.value = skus.value.twoCategoryName
+  coneid.value = skus.value.oneCategoryId
+  ctwoid.value = skus.value.twoCategoryId
+  commentnum.value = skus.value.commentNum
+  salesnum.value = skus.value.sales
+  //spudescript.value= skus.value.
+  //skuobj.value = skus.value.skuList[0]
+  console.log('skuobj初始化', skuObj.value);
 
-
-  const spuImage = skus.value.spuImage;
-  if (spuImage) {
-    showimagelist.value.push(spuImage );
+  const spuImagelist = skus.value.spuImageList;
+  if (Array.isArray(spuImagelist)) {
+    spuImagelist.forEach((spuimageurl) => {
+      if (spuimageurl) {
+        showimagelist.value.push(spuimageurl);
+      }
+    });
   }
 
+
   // Extract and process skuList
-  const skuList = skus.value.skuList;
-  if (Array.isArray(skuList)) {
-    skuList.forEach((sku) => {
+  const skuListt = skus.value.skuList;
+  skuList.value = skus.value.skuList;
+  console.log('skuList在这里', skuList);
+  console.log('skuListvalue在这里', skuList.value);
+
+  if (Array.isArray(skuListt)) {
+    skuListt.forEach((sku) => {
       if (sku.hasImage) {
         showimagelist.value.push(sku.hasImage);
       }
     });
   }
 
-  console.log(showimagelist.value);
+  //console.log(showimagelist.value);
 }
 onMounted(() => getSKUs())
+// count
+const count = ref(1)
+const countChange = (count) => {
+  console.log(count)
+}
+
+const skuChange = (sku) => {
+  console.log('把sku选择的传进来啦', sku)
+  skuObj.value = sku
+  console.log('skuObj', skuObj.value)
+}
 
 </script>
 
@@ -41,11 +96,18 @@ onMounted(() => getSKUs())
       <div class="bread-container">
         <el-breadcrumb separator=">">
           <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-          <el-breadcrumb-item :to="{ path: '/' }">母婴
+          <!-- 
+                错误原因：goods一开始{}  {}.categories -> undefined  -> undefined[1]
+                1. 可选链的语法?. 
+                2. v-if手动控制渲染时机 保证只有数据存在才渲染
+            -->
+          <el-breadcrumb-item :to="{ path: `/category/${coneid}` }">{{ conename }}
           </el-breadcrumb-item>
-          <el-breadcrumb-item :to="{ path: '/' }">跑步鞋
+          <el-breadcrumb-item :to="{ path: `/category/sub/${ctwoid}` }">{{
+            ctwoname
+          }}
           </el-breadcrumb-item>
-          <el-breadcrumb-item>抓绒保暖，毛毛虫子儿童运动鞋</el-breadcrumb-item>
+          <el-breadcrumb-item>{{ title }}</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
       <!-- 商品信息 -->
@@ -54,20 +116,22 @@ onMounted(() => getSKUs())
           <div class="goods-info">
             <div class="media">
               <!-- 图片预览区 -->
-<imageview :image-list="showimagelist"></imageview>
+              <imageview :image-list="showimagelist"></imageview>
+              <!-- 视频预览区 -->
+
               <!-- 统计数量 -->
               <ul class="goods-sales">
                 <li>
                   <p>销量人气</p>
-                  <p> 100+ </p>
+                  <p> {{ salesnum }}+ </p>
                   <p><i class="iconfont icon-task-filling"></i>销量人气</p>
                 </li>
                 <li>
                   <p>商品评价</p>
-                  <p>200+</p>
+                  <p>{{ commentnum }}+</p>
                   <p><i class="iconfont icon-comment-filling"></i>查看评价</p>
                 </li>
-                <li>
+                <!-- <li>
                   <p>收藏人气</p>
                   <p>300+</p>
                   <p><i class="iconfont icon-favorite-filling"></i>收藏商品</p>
@@ -76,22 +140,34 @@ onMounted(() => getSKUs())
                   <p>品牌信息</p>
                   <p>400+</p>
                   <p><i class="iconfont icon-dynamic-filling"></i>品牌主页</p>
-                </li>
+                </li> -->
               </ul>
             </div>
             <div class="spec">
               <!-- 商品信息区 -->
               <p class="g-name"> {{ title }} </p>
-              <p class="g-desc">好穿 </p>
-              <p class="g-price">
+              <!-- <p class="g-desc" >descripttoadd </p> -->
+
+              <p class="g-desc" :key="1" v-if="skuObj === {}">descripttoadd </p>
+              <p class="g-desc2" :key="2" v-if="skuObj !== {}">{{ skuObj.descript }} </p>
+
+              <!-- <p class="g-price">
                 <span>200</span>
                 <span> 100</span>
-              </p>
+              </p> -->
+              <!-- sku组件 -->
+              <p class="skutitle"> 规格选择 </p>
+              <Sku :skulist="skuList" @change="skuChange" />
+
+              <el-input-number class="countbtn" v-model="count" @change="countChange" v-if="count <= skuObj.stock" />
+
+
+
               <div class="g-service">
-                <dl>
+                <!-- <dl>
                   <dt>促销</dt>
                   <dd>12月好物放送，App领券购买直降120元</dd>
-                </dl>
+                </dl> -->
                 <dl>
                   <dt>服务</dt>
                   <dd>
@@ -102,7 +178,6 @@ onMounted(() => getSKUs())
                   </dd>
                 </dl>
               </div>
-              <!-- sku组件 -->
 
               <!-- 数据组件 -->
 
@@ -185,9 +260,23 @@ onMounted(() => getSKUs())
     font-size: 22px;
   }
 
+  .skutitle {
+    margin-top: 20px;
+
+    font-size: 20px;
+  }
+
+  .countbtn {
+    margin-top: 20px;
+  }
   .g-desc {
     color: #999;
-    margin-top: 10px;
+    margin-top: 20px;
+  }
+
+  .g-desc2 {
+    color: #999;
+    margin-top: 20px;
   }
 
   .g-price {
@@ -217,7 +306,7 @@ onMounted(() => getSKUs())
     background: #f5f5f5;
     width: 500px;
     padding: 20px 10px 0 10px;
-    margin-top: 10px;
+    margin-top: 20px;
 
     dl {
       padding-bottom: 20px;
@@ -356,11 +445,36 @@ onMounted(() => getSKUs())
 }
 
 .btn {
-  margin-top: 20px;
+  margin-top: 50px;
 
 }
 
 .bread-container {
   padding: 25px 0;
+}
+
+.spec-item {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.spec-item span {
+  border: 1px solid #eee;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+.spec-item .active {
+  border: 1px solid red;
+  background-color: red;
+  color: #fff;
+}
+
+.spec-item .disabled {
+  color: #c0c4cc;
+  cursor: not-allowed;
+  background-image: none;
+  background-color: #fff;
+  border-color: #ebeef5;
 }
 </style>

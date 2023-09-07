@@ -3,9 +3,15 @@ import { getCategoryAPI } from '@/apis/categoryone'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router';
 import { getCategorytwo } from '@/views/CategoryTwo/composables/getaCategorytwo';
-const { categorytwo } = getCategorytwo()
+const { categorytwo  } = getCategorytwo()
 const categoryList = ref([])
+const parentid = ref({})
+console.log(333, categorytwo);
+//console.log(333464, categorytwovalue);
+console.log(4444, categorytwo.value);
+console.log(5555, categorytwo.value.parentId);
 
+parentid.value=categorytwo.value.parentId
 
 const getCategory = async () => {
     const res = await getCategoryAPI()
@@ -15,10 +21,12 @@ const route = useRoute();
 onMounted(() => { getCategory() })
 
 const linkClasses = (itemId, idtwo = route.params.id) => {
+   // console.log(111, parentid);
+   //console.log(222, itemId);
 
     const isActive =
         route.path === `/category/${itemId}` ||
-        (route.path === `/category/sub/${idtwo}` && `${categorytwo.value.parentId}` === `${itemId}`);
+        (route.path === `/category/sub/${idtwo}` && `${parentid.value}` === `${itemId}`);
 
     return {
         active: isActive,

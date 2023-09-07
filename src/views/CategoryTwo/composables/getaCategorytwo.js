@@ -6,11 +6,15 @@ import { onBeforeRouteUpdate } from 'vue-router'
 
 export function getCategorytwo() {
     // 获取分类数据
-    const categorytwo = ref([])
+    const categorytwo = ref({})
+    //let categorytwovalue;
     const route = useRoute()
     const getCategory = async (id = route.params.id) => {
         const res = await getaCategorytwoid(id)
         categorytwo.value = res.data
+        //console.log(83749, categorytwo.value);
+        //categorytwovalue = categorytwo.value
+        //console.log(837483749279, categorytwovalue);
 
     }
     onMounted(() => getCategory())
@@ -22,5 +26,6 @@ export function getCategorytwo() {
     })
     return {
         categorytwo
+        //categorytwovalue
     }
 }
