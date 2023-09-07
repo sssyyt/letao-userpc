@@ -1,32 +1,40 @@
 <script setup>
 import { getCategoryAPI } from '@/apis/categoryone'
+import{ getSKU }from '@/apis/skuget'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router';
+//import HeaderCart from './HeaderCart.vue'
 import { getCategorytwo } from '@/views/CategoryTwo/composables/getaCategorytwo';
-const { categorytwo  } = getCategorytwo()
+//从二级分类查出一级分类id
+const {  parentid } = getCategorytwo()
 const categoryList = ref([])
-const parentid = ref({})
-console.log(333, categorytwo);
-//console.log(333464, categorytwovalue);
-console.log(4444, categorytwo.value);
-console.log(5555, categorytwo.value.parentId);
+const skucategory = ref({})
 
-parentid.value=categorytwo.value.parentId
+// console.log(4444, categorytwo.value.id.value);
+const getskuCategory = async (id= route.params.id ) => {
+    const res = await getSKU(id)
+    skucategory.value = res.data
+    //console.log('skucategory',skucategory.value.oneCategoryId)
+    
+}
+const route = useRoute();
+onMounted(() => { getskuCategory() })
 
 const getCategory = async () => {
     const res = await getCategoryAPI()
     categoryList.value = res.data
 }
-const route = useRoute();
+//const route = useRoute();
 onMounted(() => { getCategory() })
 
 const linkClasses = (itemId, idtwo = route.params.id) => {
-   // console.log(111, parentid);
-   //console.log(222, itemId);
+    // console.log(5555, parentid.value);
+    
 
     const isActive =
         route.path === `/category/${itemId}` ||
-        (route.path === `/category/sub/${idtwo}` && `${parentid.value}` === `${itemId}`);
+        (route.path === `/category/sub/${idtwo}` && `${parentid.value}` === `${itemId}`) ||
+        (route.path === `/detail/${idtwo}` && `${skucategory.value.oneCategoryId}` === `${itemId}`) 
 
     return {
         active: isActive,
@@ -60,7 +68,7 @@ const linkClasses = (itemId, idtwo = route.params.id) => {
                 <input type="text" placeholder="搜一搜">
             </div>
             <!-- 头部购物车 -->
-
+            <!-- <HeaderCart /> -->
         </div>
     </header>
 </template>

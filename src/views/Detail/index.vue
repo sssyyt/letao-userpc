@@ -24,7 +24,8 @@ const conename = ref({})
 const ctwoname = ref({})
 const coneid = ref({})
 const ctwoid = ref({})
-//const spudescript = ref({})
+const priceH = ref({})
+const priceL = ref({})
 
 //获取评论数以及销量
 const commentnum = ref({})
@@ -36,7 +37,7 @@ const salesnum = ref({})
 const getSKUs = async () => {
   const res = await getSKU(route.params.id)
   skus.value = res.data
-  console.log('sku参数', skus.value);
+ // console.log('sku参数', skus.value);
   //给各个参数赋值
   title.value = skus.value.spuName
   conename.value = skus.value.oneCategoryName
@@ -45,9 +46,12 @@ const getSKUs = async () => {
   ctwoid.value = skus.value.twoCategoryId
   commentnum.value = skus.value.commentNum
   salesnum.value = skus.value.sales
+  priceH.value = skus.value.priceHigh
+  priceL.value = skus.value.priceLow
+
   //spudescript.value= skus.value.
   //skuobj.value = skus.value.skuList[0]
-  console.log('skuobj初始化', skuObj.value);
+  //console.log('skuobj初始化', skuObj.value);
 
   const spuImagelist = skus.value.spuImageList;
   if (Array.isArray(spuImagelist)) {
@@ -62,8 +66,8 @@ const getSKUs = async () => {
   // Extract and process skuList
   const skuListt = skus.value.skuList;
   skuList.value = skus.value.skuList;
-  console.log('skuList在这里', skuList);
-  console.log('skuListvalue在这里', skuList.value);
+  //console.log('skuList在这里', skuList);
+  //console.log('skuListvalue在这里', skuList.value);
 
   if (Array.isArray(skuListt)) {
     skuListt.forEach((sku) => {
@@ -83,9 +87,9 @@ const countChange = (count) => {
 }
 
 const skuChange = (sku) => {
-  console.log('把sku选择的传进来啦', sku)
+ // console.log('把sku选择的传进来啦', sku)
   skuObj.value = sku
-  console.log('skuObj', skuObj.value)
+  //console.log('skuObj change', skuObj.value)
 }
 
 </script>
@@ -146,15 +150,20 @@ const skuChange = (sku) => {
             <div class="spec">
               <!-- 商品信息区 -->
               <p class="g-name"> {{ title }} </p>
-              <!-- <p class="g-desc" >descripttoadd </p> -->
 
-              <p class="g-desc" :key="1" v-if="skuObj === {}">descripttoadd </p>
-              <p class="g-desc2" :key="2" v-if="skuObj !== {}">{{ skuObj.descript }} </p>
+              <p class="g-desc" :key="1" v-if="JSON.stringify(skuObj) === '{}'">descripttoadd </p>
+              <p class="g-desc2" :key="2" v-else>{{ skuObj.descript }} </p>
 
-              <!-- <p class="g-price">
-                <span>200</span>
-                <span> 100</span>
-              </p> -->
+
+
+              <p class="g-price" :key="4" v-if="JSON.stringify(skuObj) === '{}'">
+                &yen;{{ priceL }} ~ {{ priceH }}
+              </p>
+
+
+              <p class="g-price" :key="3" v-else>
+                <span>{{ skuObj.price }}</span>
+              </p>
               <!-- sku组件 -->
               <p class="skutitle"> 规格选择 </p>
               <Sku :skulist="skuList" @change="skuChange" />
@@ -269,6 +278,7 @@ const skuChange = (sku) => {
   .countbtn {
     margin-top: 20px;
   }
+
   .g-desc {
     color: #999;
     margin-top: 20px;
@@ -281,24 +291,22 @@ const skuChange = (sku) => {
 
   .g-price {
     margin-top: 10px;
+    color: $priceColor;
+    font-size: 20px;
 
     span {
       &::before {
         content: "¥";
-        font-size: 14px;
+        font-size: 20px;
       }
 
-      &:first-child {
-        color: $priceColor;
-        margin-right: 10px;
-        font-size: 22px;
-      }
 
-      &:last-child {
-        color: #999;
-        text-decoration: line-through;
-        font-size: 16px;
-      }
+     // color: $priceColor;
+      margin-right: 10px;
+      font-size: 20px;
+
+
+
     }
   }
 

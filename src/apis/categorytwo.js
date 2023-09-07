@@ -13,6 +13,7 @@ export function getCategorytwoid(id) {
 export function getaCategorytwoid(id) {
     return httpInstance({
         url: '/base/category/' + id,
+       // method: 'POST',
     })
 }
 

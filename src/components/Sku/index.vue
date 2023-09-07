@@ -36,7 +36,7 @@ function initDisabledStatus(skulist) {
         onesku.disabled = 1
     })
   }
-  console.log('初始化禁用状态', skulist, selectsku);
+  //console.log('初始化禁用状态', skulist, selectsku);
 }
 
 function updateSelect(skulist) {
@@ -47,7 +47,7 @@ function updateSelect(skulist) {
     }
 
   })
-  console.log('更新选择状态', skulist, selectsku);
+  //console.log('更新选择状态', skulist, selectsku);
 
 }
 
@@ -103,11 +103,11 @@ export default {
       //const selectedArr = getSelectedArr(props.skulist).filter(value => value)
       // 如果选中得规格数量和传入得规格总数相等则传出完整信息(都选择了)
       // 否则传出空对象
-      console.log('更新完selectsku啦', selectsku.value);
+      //console.log('更新完selectsku啦', selectsku.value);
 
 
       if (selectsku.value !== null) {
-        console.log('传递数据给父组件', selectsku.value);
+       // console.log('传递数据给父组件', selectsku.value);
         emit('change', {
           id: selectsku.value.id,
           price: selectsku.value.price,
@@ -118,7 +118,7 @@ export default {
 
         })
       } else {
-        console.log('传递数据给父组件的是空对象啊', selectsku.value);
+       // console.log('传递数据给父组件的是空对象啊', selectsku.value);
         emit('change', {})
 
       }
