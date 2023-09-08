@@ -7,7 +7,7 @@ import { onBeforeRouteUpdate } from 'vue-router'
 
 export function getCategorytwo() {
     // 获取分类数据
-    const parentid = ref({})
+//const parentid = ref({})
 
     const categorytwo = ref({})
    // categorytwo.value = { id: 0 }
@@ -18,9 +18,7 @@ export function getCategorytwo() {
        // console.log('data', res)
         // console.log('result', res.result)
         categorytwo.value = res.data
-        parentid.value = categorytwo.value.parentId
-       // console.log('parentid', parentid.value)
-
+       
         // categorytwo.value = JSON.stringify(res.code)
         //console.log(83749, categorytwo.value);
         //categorytwovalue = categorytwo.value
@@ -38,8 +36,7 @@ export function getCategorytwo() {
         getCategory(to.params.id)
     })
     return {
-        categorytwo,
-        parentid
+        categorytwo
         //categorytwovalue
     }
 }

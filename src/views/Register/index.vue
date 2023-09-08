@@ -152,9 +152,9 @@ const doRegister = () => {
                             <el-form-item prop="phoneNumber" label="手机号">
                                 <el-input v-model="form.phoneNumber" clearable/>
                             </el-form-item>
-
+ 
                             <el-form-item prop="password" label="密码">
-                                <el-input v-model="form.password" clearable/>
+                                <el-input v-model="form.password" clearable type="password"/>
                             </el-form-item>
                             <el-form-item prop="passwordConfirmation" label="确认密码">
                                 <el-input type="password" v-model="form.passwordConfirmation" clearable/>

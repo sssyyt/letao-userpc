@@ -65,10 +65,19 @@ const {  disabled,load,productlist } = useCategoryoneproduct()
     .sub-list {
         margin-top: 20px;
         background-color: #fff;
+         .body {
+           display: flex;
+            padding: 0px 32px;
+            flex-wrap: wrap;
+            justify-content: center;
+
+            //justify-content: space-around;
+            //padding: 0 40px 30px;
+        }
 
         ul {
             display: flex;
-            padding: 0 32px;
+            padding: 0px 32px;
             flex-wrap: wrap;
             justify-content: center;
 

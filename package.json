@@ -12,6 +12,7 @@
     "@vueuse/core": "^10.4.1",
     "axios": "^1.5.0",
     "element-plus": "^2.3.12",
+    "elui-china-area-dht": "^2.0.0",
     "jsencrypt": "^3.3.2",
     "pinia": "^2.1.6",
     "pinia-plugin-persist": "^1.0.0",

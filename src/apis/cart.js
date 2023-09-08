@@ -21,15 +21,15 @@ export const findNewCartListAPI = () => {
 }
 
 // 删除购物车
-// export const delCartAPI = (ids) => {
-//   return request({
-//     url: '/member/cart',
-//     method: 'DELETE',
-//     data: {
-//       ids
-//     }
-//   })
-// }
+export const delCartAPI = (skuId) => {
+  return request({
+    url: '/user/cart',
+    method: 'DELETE',
+    params: {
+      skuId
+    }
+  })
+}
 
 // 合并购物车
 

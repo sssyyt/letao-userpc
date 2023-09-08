@@ -6,7 +6,7 @@ import { useUserStore } from '/Users/shiyutian/letao/letao_userpc/src/stores/use
 
 // 创建axios实例
 const httpInstance = axios.create({
-    baseURL: 'http://296b66b1.r3.cpolar.cn',
+    baseURL: 'http://e59d2e1.r20.cpolar.top',
     timeout: 5000,
    // headers: { authorization: 123456 }
     
@@ -25,17 +25,17 @@ httpInstance.interceptors.request.use(config => {
 
 // axios响应式拦截器
 httpInstance.interceptors.response.use(res => res.data, e => {
-    const userStore = useUserStore()
+    //const userStore = useUserStore()
     // 统一错误提示
     ElMessage({
         type: 'warning',
         message: e.message
 
     })
-    if (e.request.status === 401)
-    {
-        userStore.clearUserInfo()
-        }
+    // if (e.request.status === 401)
+    // {
+    //     userStore.clearUserInfo()
+    //     }
     return Promise.reject(e)
 })
 

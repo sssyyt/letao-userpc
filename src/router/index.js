@@ -7,6 +7,7 @@ import miaosha from '@/views/miaosha/index.vue'
 import categorytwo from '@/views/CategoryTwo/index.vue'
 import Register from "@/views/Register/index.vue"
 import Detail from '@/views/Detail/index.vue'
+import Checkout from '@/views/Checkout/index.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -35,6 +36,10 @@ const router = createRouter({
           path: 'detail/:id',
           component: Detail
         },
+        {
+          path: 'checkout',
+          component: Checkout
+        }
       ]
     },
     {

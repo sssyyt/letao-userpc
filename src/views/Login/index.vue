@@ -234,7 +234,7 @@ const doLogintwo = () => {
                                 <el-input v-model="form.phoneNumber" clearable />
                             </el-form-item>
                             <el-form-item prop="password" label="密码">
-                                <el-input v-model="form.password" clearable />
+                                <el-input v-model="form.password" clearable type="password"/>
                             </el-form-item>
                             <el-form-item prop="agree" label-width="22px">
                                 <el-checkbox size="large" v-model="form.agree">

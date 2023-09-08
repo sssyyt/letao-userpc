@@ -1,8 +1,11 @@
 //todo视频预览
 //评价显示以及锚点
 <script setup>
+import { ElMessage } from 'element-plus'
 import { getSKU } from '@/apis/skuget'
 import { onMounted, ref } from 'vue'
+import { useCartStore } from '@/stores/cartStore'
+const cartStore = useCartStore()
 import { useRoute } from 'vue-router'
 import imageview from '/Users/shiyutian/letao/letao_userpc/src/components/ImageView/index.vue'
 import Sku from '/Users/shiyutian/letao/letao_userpc/src/components/Sku/index.vue'
@@ -26,6 +29,7 @@ const coneid = ref({})
 const ctwoid = ref({})
 const priceH = ref({})
 const priceL = ref({})
+const desc = ref({})
 
 //获取评论数以及销量
 const commentnum = ref({})
@@ -37,7 +41,7 @@ const salesnum = ref({})
 const getSKUs = async () => {
   const res = await getSKU(route.params.id)
   skus.value = res.data
- // console.log('sku参数', skus.value);
+  // console.log('sku参数', skus.value);
   //给各个参数赋值
   title.value = skus.value.spuName
   conename.value = skus.value.oneCategoryName
@@ -48,7 +52,7 @@ const getSKUs = async () => {
   salesnum.value = skus.value.sales
   priceH.value = skus.value.priceHigh
   priceL.value = skus.value.priceLow
-
+  desc.value = skus.value.descript
   //spudescript.value= skus.value.
   //skuobj.value = skus.value.skuList[0]
   //console.log('skuobj初始化', skuObj.value);
@@ -87,9 +91,30 @@ const countChange = (count) => {
 }
 
 const skuChange = (sku) => {
- // console.log('把sku选择的传进来啦', sku)
+  // console.log('把sku选择的传进来啦', sku)
   skuObj.value = sku
   //console.log('skuObj change', skuObj.value)
+}
+
+const addCart = () => {
+  if (JSON.stringify(skuObj.value) !== '{}') {
+    // console.log('addcartt')
+
+    // console.log('skuObj', skuObj.value)
+    // console.log('count', count.value)
+
+    // 规则已经选择  触发action
+    cartStore.addCart({
+      skuId: skuObj.value.id,
+      number: count.value
+    })
+    ElMessage.success('加入购物车成功')
+
+    //console.log('addwann')
+
+  } else {
+    ElMessage.warning('请选择规格')
+  }
 }
 
 </script>
@@ -151,18 +176,21 @@ const skuChange = (sku) => {
               <!-- 商品信息区 -->
               <p class="g-name"> {{ title }} </p>
 
-              <p class="g-desc" :key="1" v-if="JSON.stringify(skuObj) === '{}'">descripttoadd </p>
+              <p class="g-desc" :key="1" v-if="JSON.stringify(skuObj) === '{}'">{{ desc }} </p>
               <p class="g-desc2" :key="2" v-else>{{ skuObj.descript }} </p>
 
 
 
-              <p class="g-price" :key="4" v-if="JSON.stringify(skuObj) === '{}'">
+              <p class="g-price" :key="4" v-if="JSON.stringify(skuObj) === '{}' && priceL === priceH">
+                &yen;{{ priceL }}
+              </p>
+
+              <p class="g-price" :key="6" v-if="JSON.stringify(skuObj) === '{}' && priceL !== priceH">
                 &yen;{{ priceL }} ~ {{ priceH }}
               </p>
 
-
-              <p class="g-price" :key="3" v-else>
-                <span>{{ skuObj.price }}</span>
+              <p class="g-price" :key="3" v-if="JSON.stringify(skuObj) !== '{}'">
+                &yen;{{ skuObj.price }}
               </p>
               <!-- sku组件 -->
               <p class="skutitle"> 规格选择 </p>
@@ -192,7 +220,7 @@ const skuChange = (sku) => {
 
               <!-- 按钮组件 -->
               <div>
-                <el-button size="large" class="btn">
+                <el-button size="large" class="btn" @click="addCart">
                   加入购物车
                 </el-button>
               </div>
@@ -301,7 +329,7 @@ const skuChange = (sku) => {
       }
 
 
-     // color: $priceColor;
+      // color: $priceColor;
       margin-right: 10px;
       font-size: 20px;
 

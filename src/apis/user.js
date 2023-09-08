@@ -65,11 +65,36 @@ export const mloginAPI = ({ phoneNumber, code }) => {
 }
 
 
-export const getLikeListAPI = ({ limit = 4 }) => {
+// export const getLikeListAPI = ({ limit = 4 }) => {
+//   return request({
+//     url: '/goods/relevant',
+//     params: {
+//       limit
+//     }
+//   })
+// }
+
+
+//获取用户默认地址
+export const getdefaultAdrAPI = () => {
   return request({
-    url: '/goods/relevant',
-    params: {
-      limit
+    url: '/user/address',
+    method: 'GET'
+  })
+}
+
+
+export const senddefaultAdrAPI = ({ consigneeName, consigneePhoneNumber, consigneeSex ,detail}) => {
+  return request({
+    url: '/user/address',
+    method: 'PUT',
+    data: {
+      provinceId:0,
+      consigneeName,
+      consigneePhoneNumber,
+      consigneeSex,
+      detail
     }
   })
 }
+

@@ -1,24 +1,16 @@
+//导航栏亮
 <script setup>
 import { getCategoryAPI } from '@/apis/categoryone'
-import{ getSKU }from '@/apis/skuget'
 import { onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router';
-//import HeaderCart from './HeaderCart.vue'
-import { getCategorytwo } from '@/views/CategoryTwo/composables/getaCategorytwo';
+import HeaderCart from './HeaderCart.vue'
+//import { linkClasses } from '/Users/shiyutian/letao/letao_userpc/src/views/Layout/composables/getlink';
 //从二级分类查出一级分类id
-const {  parentid } = getCategorytwo()
+//const {  parentid , skucategory } = getCategorytwo()
 const categoryList = ref([])
-const skucategory = ref({})
 
 // console.log(4444, categorytwo.value.id.value);
-const getskuCategory = async (id= route.params.id ) => {
-    const res = await getSKU(id)
-    skucategory.value = res.data
-    //console.log('skucategory',skucategory.value.oneCategoryId)
-    
-}
-const route = useRoute();
-onMounted(() => { getskuCategory() })
+
+
 
 const getCategory = async () => {
     const res = await getCategoryAPI()
@@ -27,19 +19,6 @@ const getCategory = async () => {
 //const route = useRoute();
 onMounted(() => { getCategory() })
 
-const linkClasses = (itemId, idtwo = route.params.id) => {
-    // console.log(5555, parentid.value);
-    
-
-    const isActive =
-        route.path === `/category/${itemId}` ||
-        (route.path === `/category/sub/${idtwo}` && `${parentid.value}` === `${itemId}`) ||
-        (route.path === `/detail/${idtwo}` && `${skucategory.value.oneCategoryId}` === `${itemId}`) 
-
-    return {
-        active: isActive,
-    };
-};
 
 
 </script>
@@ -55,7 +34,8 @@ const linkClasses = (itemId, idtwo = route.params.id) => {
                     <RouterLink to="/">首页</RouterLink>
                 </li>
                 <li class="home" v-for="item in categoryList" :key="item.id">
-                    <RouterLink :to="`/category/${item.id}`" :class="linkClasses(item.id)">
+                    <!-- :class="linkClasses(item.id)" -->
+                    <RouterLink :to="`/category/${item.id}`">
                         {{ item.name }}
                     </RouterLink>
                 </li>
@@ -68,7 +48,7 @@ const linkClasses = (itemId, idtwo = route.params.id) => {
                 <input type="text" placeholder="搜一搜">
             </div>
             <!-- 头部购物车 -->
-            <!-- <HeaderCart /> -->
+            <HeaderCart />
         </div>
     </header>
 </template>
