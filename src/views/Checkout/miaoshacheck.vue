@@ -5,9 +5,21 @@ import { ElMessage } from 'element-plus'
 import { getdefaultAdrAPI, senddefaultAdrAPI } from '@/apis/user'
 import { getRegionsAPI, getshopRegionsAPI } from '@/apis/shops'
 import { ref, onMounted } from 'vue'
-import { useCartStore } from '@/stores/cartStore'
+import { useRoute } from 'vue-router'
 
-const cartStore = useCartStore()
+import { miaoshaAPI } from '@/apis/miaosha'
+const route = useRoute()
+
+const good = ref({})
+
+const getdetail = async () => {
+  const res = await miaoshaAPI(route.params.id)
+  good.value = res.data
+  console.log(good)
+}
+onMounted(() => getdetail())
+
+
 //const router = useRouter()
 //console.log(cartStore.cartList);
 const curAddress = ref({}) // 默认地址
@@ -146,23 +158,20 @@ onMounted(() => { getfilterShops() })
             </tr>
           </thead>
           <tbody>
-            <tr v-for="i in cartStore.cartList.data" :key="i.id">
+            <tr >
               <td>
                 <a href="javascript:;" class="info">
-                  <img :src="i.skuImage" alt="">
+                  <img :src="good.seckillImage" alt="">
                   <div class="right">
-                    <p>{{ i.spuName }} </p>
-                    <p>规格： {{ i.skuName }}</p>
-                    <p>{{ i.descript }}</p>
+                    <p>{{ good.name }} </p>
+                    <p>{{ good.descript }}</p>
                   </div>
                 </a>
               </td>
-              <td>&yen;{{ i.cartPrice }}</td>
-              <td>{{ i.number }}</td>
-              <td>&yen;{{ i.number * i.cartPrice }}</td>
+              <td>&yen;{{ good.constPrice }}</td>
+              <td>{{ 1 }}</td>
+              <td>&yen;{{ good.constPrice }}</td>
 
-              <!-- <td>&yen;{{ i.totalPrice }}</td>
-                  <td>&yen;{{ i.totalPayPrice }}</td> -->
             </tr>
           </tbody>
         </table>
@@ -198,19 +207,19 @@ onMounted(() => { getfilterShops() })
             </div>
             <ul v-else>
               <li v-if="isEditing">
-                <span>收<i />货<i />人：</span>
+                <span>收<good />货<good />人：</span>
                 <input v-model="editedConsigneeName" type="text" :placeholder="curAddress.data.consigneeName">
               </li>
               <li v-else>
-                <span>收<i />货<i />人：</span>{{ curAddress.data.consigneeName }}
+                <span>收<good />货<good />人：</span>{{ curAddress.data.consigneeName }}
               </li>
               <li v-if="isEditing">
-                <span>性<i />别：</span>
+                <span>性<good />别：</span>
                 <el-radio v-model="editedConsigneeSex" label="1">男</el-radio>
                 <el-radio v-model="editedConsigneeSex" label="0">女</el-radio>
               </li>
               <li v-else>
-                <span>性<i />别：</span>{{ curAddress.data.consigneeSex === '1' ? '男' : '女' }}
+                <span>性<good />别：</span>{{ curAddress.data.consigneeSex === '1' ? '男' : '女' }}
               </li>
 
               <li v-if="isEditing">
@@ -286,19 +295,19 @@ onMounted(() => { getfilterShops() })
         <div class="total">
           <dl>
             <dt>商品件数：</dt>
-            <dd>{{ cartStore.cartList.data.length }}件</dd>
+            <dd>{{ 1 }}件</dd>
           </dl>
           <dl>
             <dt>商品总价：</dt>
-            <dd>¥{{ cartStore.totalprice }}</dd>
+            <dd>¥{{ good.constPrice }}</dd>
           </dl>
           <dl>
-            <dt>运<i></i>费：</dt>
+            <dt>运<good></good>费：</dt>
             <dd>¥{{ 0 }}</dd>
           </dl>
           <dl>
             <dt>应付总额：</dt>
-            <dd class="price">{{ cartStore.totalprice }}</dd>
+            <dd class="price">{{ good.constPrice }}</dd>
           </dl>
         </div>
       </div>
@@ -379,7 +388,7 @@ onMounted(() => { getfilterShops() })
           color: #999;
           margin-right: 5px;
 
-          >i {
+          >good {
             width: 0.5em;
             display: inline-block;
           }
@@ -461,7 +470,7 @@ onMounted(() => { getfilterShops() })
           color: #999;
           margin-right: 5px;
 
-          >i {
+          >good {
             width: 0.5em;
             display: inline-block;
           }
@@ -536,7 +545,7 @@ onMounted(() => { getfilterShops() })
           color: #999;
           margin-right: 5px;
 
-          >i {
+          >good {
             width: 0.5em;
             display: inline-block;
           }
@@ -664,7 +673,7 @@ onMounted(() => { getfilterShops() })
     margin-left: 70px;
 
     dt {
-      i {
+      good {
         display: inline-block;
         width: 2em;
       }

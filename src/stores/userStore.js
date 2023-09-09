@@ -5,7 +5,6 @@ import { ref } from 'vue'
 import { loginAPI } from '@/apis/user'
 import { mloginAPI } from '@/apis/user'
 import { getUserInfo } from '@/apis/user'
-
 export const useUserStore = defineStore('user', () => {
 
 
@@ -37,6 +36,9 @@ export const useUserStore = defineStore('user', () => {
   const clearUserInfo = () => {
     userToken.value = {}
     userInfo.value = {}
+    userToken.value.code=0
+   // cartStore.clearInfo()
+
   }
   // 3. 以对象的格式把state和action return
   return {

@@ -6,6 +6,8 @@ import 'element-plus/theme-chalk/el-message.css'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
+import { useCartStore } from '@/stores/cartStore'
+const cartStore = useCartStore()
 import { getRSA } from '@/apis/user'
 import { getCaptcha } from '@/apis/user'
 const userStore = useUserStore()
@@ -161,6 +163,7 @@ const doLogin = () => {
                 //console.log('登录成功')
                 await userStore.getUserData()
                 //console.log('getUserData成功 准备跳转到首页')
+                await cartStore.updateNewList()
 
                 router.replace({ path: '/' })
             }
@@ -174,13 +177,14 @@ const doLogin = () => {
 
 const doLogintwo = () => {
     const { phoneNumber, captcha } = formtwo.value
-    
+
     formtwoRef.value.validate(async (valid) => {
         if (valid) {
             await userStore.getUserTokentwo({ phoneNumber, code: captcha })
             if (userStore.userToken.code === 1) {
                 ElMessage({ type: 'success', message: '登录成功' })
                 await userStore.getUserData()
+                await cartStore.updateNewList()
                 router.replace({ path: '/' })
             }
             else {
@@ -234,7 +238,7 @@ const doLogintwo = () => {
                                 <el-input v-model="form.phoneNumber" clearable />
                             </el-form-item>
                             <el-form-item prop="password" label="密码">
-                                <el-input v-model="form.password" clearable type="password"/>
+                                <el-input v-model="form.password" clearable type="password" />
                             </el-form-item>
                             <el-form-item prop="agree" label-width="22px">
                                 <el-checkbox size="large" v-model="form.agree">

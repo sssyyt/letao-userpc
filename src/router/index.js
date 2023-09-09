@@ -4,11 +4,12 @@ import Layout from '@/views/Layout/index.vue'
 import Home from '@/views/Home/index.vue'
 import Category from '@/views/Category/index.vue'
 import miaosha from '@/views/miaosha/index.vue'
+import miaoshaCheckout from '@/views/Checkout/miaoshacheck.vue'
 import categorytwo from '@/views/CategoryTwo/index.vue'
 import Register from "@/views/Register/index.vue"
 import Detail from '@/views/Detail/index.vue'
 import Checkout from '@/views/Checkout/index.vue'
-
+import miaoshaDetail from '@/views/miaosha/miaoshaDetail.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -37,8 +38,16 @@ const router = createRouter({
           component: Detail
         },
         {
+          path: 'miaosha/:id',
+          component: miaoshaDetail
+        },
+        {
           path: 'checkout',
           component: Checkout
+        },
+        {
+          path: 'miaoshacheckout/:id',
+          component: miaoshaCheckout
         }
       ]
     },

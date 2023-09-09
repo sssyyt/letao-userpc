@@ -7,14 +7,10 @@ export const findNewAPI = () => {
   })
 }
 
-/**
- * @description: 获取高销量推荐
- * @param {*}
- * @return {*}
- */
+
 export const getHotAPI = () => {
   return httpInstance({
-    url: '/home/hot'
+    url: '/product/hot'
   })
 }
 

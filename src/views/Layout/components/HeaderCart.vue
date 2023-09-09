@@ -7,9 +7,10 @@ const cartStore = useCartStore()
 </script>
 
 <template>
-  <div class="cart">
+  <div class="cart" v-if="cartStore.isLogin">
     <a class="curr" href="javascript:;">
-      <i class="iconfont icon-cart"></i><em> {{ cartStore.cartList.data.length }}  </em>
+      <!-- <i class="iconfont icon-cart"></i><em> {{ cartStore.cartList.data }}  </em> -->
+      <i class="iconfont icon-cart"></i><em> {{ cartStore.cartList.data.length }} </em>
     </a>
     <div class="layer">
       <div class="list">
@@ -34,13 +35,15 @@ const cartStore = useCartStore()
       </div>
       <div class="foot">
         <div class="total">
+          <!-- <p>共 {{ 1 }} 样商品</p> -->
+
           <p>共 {{ cartStore.cartList.data.length }} 样商品</p>
           <p>&yen; {{ cartStore.totalprice }} </p>
         </div>
         <el-button size="large" type="primary" @click="$router.push('/checkout')">去购物车结算</el-button>
       </div>
     </div>
-</div>
+  </div>
 </template>
 
 <style scoped lang="scss">

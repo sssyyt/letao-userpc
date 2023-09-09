@@ -3,6 +3,8 @@
 import { getCategoryAPI } from '@/apis/categoryone'
 import { onMounted, ref } from 'vue'
 import HeaderCart from './HeaderCart.vue'
+//import { useCartStore } from '@/stores/cartStore'
+//const cartStore = useCartStore()
 //import { linkClasses } from '/Users/shiyutian/letao/letao_userpc/src/views/Layout/composables/getlink';
 //从二级分类查出一级分类id
 //const {  parentid , skucategory } = getCategorytwo()
@@ -15,6 +17,7 @@ const categoryList = ref([])
 const getCategory = async () => {
     const res = await getCategoryAPI()
     categoryList.value = res.data
+   // console.log
 }
 //const route = useRoute();
 onMounted(() => { getCategory() })
@@ -49,6 +52,8 @@ onMounted(() => { getCategory() })
             </div>
             <!-- 头部购物车 -->
             <HeaderCart />
+            <!-- <p >  {{ cartStore.isLogin }} </p> -->
+
         </div>
     </header>
 </template>

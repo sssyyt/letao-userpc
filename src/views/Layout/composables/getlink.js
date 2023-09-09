@@ -22,7 +22,7 @@ export function linkClasses(itemId) {
             const res = await getaCategorytwoid(id)
             categorytwo.value = res.data
             parentid.value = categorytwo.value.parentId
-            console.log('是二级分类', parentid.value);
+            //console.log('是二级分类', parentid.value);
             isActive.value = (route.path === `/category/sub/${route.params.id}` && `${parentid.value}` === `${itemId}`)
         }
 
@@ -36,8 +36,8 @@ export function linkClasses(itemId) {
             //console.log('是商品详情');
             const res = await getSKU(id)
             skucategory.value = res.data
-            console.log('是商品详情', skucategory.value.oneCategoryId);
-            console.log(parentid.value, skucategory.value.oneCategoryId);
+          //  console.log('是商品详情', skucategory.value.oneCategoryId);
+          //  console.log(parentid.value, skucategory.value.oneCategoryId);
             isActive.value = (route.path === `/detail/${route.params.id}` && `${skucategory.value.oneCategoryId}` === `${itemId}`)
 
 

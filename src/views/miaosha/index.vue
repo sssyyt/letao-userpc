@@ -1,10 +1,13 @@
 <script setup>
+import miaoshaGoodsItem from '/Users/shiyutian/letao/letao_userpc/src/views/miaosha/components/miaoshaGoodsItem.vue';
+import { usemiaosha } from './composables/useMiaosha'
+const { disabled, load, miaoshaList } = usemiaosha()
 
 
 </script>
 
 <template>
-      <div class="top-category">
+      <div class="page">
             <div class="container m-top-20">
                   <!-- 面包屑 -->
                   <div class="bread-container">
@@ -15,12 +18,22 @@
                   </div>
 
             </div>
+
+            <div class="sub-list">
+                  <h3>商品列表 </h3>
+                  <div class="body" v-infinite-scroll="load" :infinite-scroll-disabled="disabled">
+                        <miaoshaGoodsItem v-for="goods in miaoshaList" :goods="goods" :key="goods.id" />
+                  </div>
+            </div>
+
+
       </div>
 </template>
 
 
 <style scoped lang="scss">
-.top-category {
+.page {
+       margin-top: 20px;
       h3 {
             font-size: 28px;
             color: #666;
@@ -33,83 +46,20 @@
             margin-top: 20px;
             background-color: #fff;
 
-            ul {
+            .body {
                   display: flex;
-                  padding: 0 32px;
+                  padding: 0px 32px;
                   flex-wrap: wrap;
                   justify-content: center;
 
-                  li {
-                        width: 168px;
-                        height: 160px;
-                        display: flex;
-                        /* 将li设置为Flex容器 */
-                        justify-content: center;
-                        /* 将子元素水平居中对齐 */
-
-                        a {
-                              display: block;
-                              font-size: 16px;
-
-                              img {
-                                    width: 100px;
-                                    height: 100px;
-                              }
-
-                              p {
-                                    line-height: 40px;
-                              }
-
-                              &:hover {
-                                    color: $letaoColor;
-                              }
-                        }
-                  }
-            }
-      }
-
-      .ref-goods {
-            background-color: #fff;
-            margin-top: 20px;
-            position: relative;
-
-            .head {
-                  .letao-more {
-                        position: absolute;
-                        top: 20px;
-                        right: 20px;
-                  }
-
-                  .tag {
-                        text-align: center;
-                        color: #999;
-                        font-size: 20px;
-                        position: relative;
-                        top: -20px;
-                  }
+                  //justify-content: space-around;
+                  //padding: 0 40px 30px;
             }
 
-            .body {
-                  display: flex;
-                  justify-content: space-around;
-                  padding: 0 40px 30px;
+            .bread-container {
+                  padding: 25px 0;
+                  height: 40px;
             }
-      }
-
-      .bread-container {
-            padding: 25px 0;
-      }
-}
-
-.home-banner {
-      width: 1240px;
-      height: 500px;
-      margin: 0 auto;
-
-
-      img {
-            width: 100%;
-            height: 500px;
       }
 }
 </style>

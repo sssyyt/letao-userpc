@@ -5,7 +5,7 @@ import { useMouseInElement } from '@vueuse/core'
 defineProps({
   imageList: {
     type: Array,
-    default:()=>[]
+    default: () => []
   }
 })
 
@@ -62,7 +62,7 @@ watch([elementX, elementY, isOutside], () => {
 
     <!-- 左侧大图-->
     <div class="middle" ref="target">
-      <img :src="imageList[activeIndex]" alt="" />
+      <img class="img" :src="imageList[activeIndex]" alt="" />
       <!-- 蒙层小滑块 -->
       <div class="layer" v-show="!isOutside" :style="{ left: `${left}px`, top: `${top}px` }"></div>
     </div>
@@ -75,7 +75,7 @@ watch([elementX, elementY, isOutside], () => {
     <!-- 放大镜大图 -->
     <div class="large" :style="[
       {
-        backgroundImage: `url(${imageList[0]})`,
+        backgroundImage: `url(${imageList[activeIndex]})`,
         backgroundPositionX: `${positionX}px`,
         backgroundPositionY: `${positionY}px`,
       },
@@ -90,10 +90,17 @@ watch([elementX, elementY, isOutside], () => {
   position: relative;
   display: flex;
 
+  .img {
+    object-fit: cover;
+    width:100%;
+  }
+
   .middle {
     width: 400px;
     height: 400px;
     background: #f5f5f5;
+
+
   }
 
   .large {
@@ -136,5 +143,4 @@ watch([elementX, elementY, isOutside], () => {
       }
     }
   }
-}
-</style>
+}</style>

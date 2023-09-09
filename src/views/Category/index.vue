@@ -63,7 +63,7 @@ const {  disabled,load,productlist } = useCategoryoneproduct()
     }
 
     .sub-list {
-        margin-top: 20px;
+      
         background-color: #fff;
          .body {
            display: flex;
