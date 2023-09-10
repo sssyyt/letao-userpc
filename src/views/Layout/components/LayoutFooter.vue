@@ -1,3 +1,20 @@
+<script setup>
+import { ref } from 'vue'
+import ChatComponent from '/Users/shiyutian/letao/letao_userpc/src/views/Layout/components/chat.vue';
+const showChat = ref(false)// 控制聊天框显示/隐藏
+//const msglist = ref([]) // 存储聊天消息
+
+const toggleChat = () => {
+    showChat.value = !showChat.value; // 切换聊天框的显示状态
+}
+const closeChat = () => {
+    //console.log('dianjiguanbi');
+    showChat.value = false; // 关闭聊天框
+}
+
+
+</script>
+
 <template>
     <footer class="app_footer">
         <!-- 联系我们 -->
@@ -5,13 +22,19 @@
             <div class="container">
                 <dl>
                     <dt>客户服务</dt>
-                    <dd><i class="iconfont icon-kefu"></i> 在线客服</dd>
-                    <dd><i class="iconfont icon-question"></i> 问题反馈</dd>
+                    <div>
+                        <dd @click="toggleChat">
+                            <i class="iconfont icon-kefu"></i> 在线客服
+                        </dd>
+                        <!-- 使用 v-if 条件渲染聊天框 -->
+
+                    </div>
+                    <dd><i class="iconfont icon-question" @click="$router.push('/help')"></i> 帮助中心</dd>
                 </dl>
-             
+
                 <dl>
                     <dt>服务热线</dt>
-                    <dd class="hotline">400-0000-000 <small>周一至周日 8:00-18:00</small></dd>
+                    <dd class="hotline">156-4088-5580 <small>周一至周日 8:00-18:00</small></dd>
                 </dl>
             </div>
         </div>
@@ -35,14 +58,18 @@
                 <!-- 版权信息 -->
                 <div class="copyright">
                     <p>
-                        <a href="javascript:;">关于我们</a>
-                        <a href="javascript:;">帮助中心</a>
-                        <a href="javascript:;">售后服务</a>
-    
+                        <a href="javascript:;" @click="$router.push('/aboutus')">关于我们</a>
+                        <a href="javascript:;" @click="$router.push('/help')">帮助中心</a>
+                        <!-- <a href="javascript:;">售后服务</a> -->
+
                     </p>
                     <p>CopyRight © 乐淘商务 </p>
                 </div>
             </div>
+        </div>
+        <div v-if="showChat">
+            <!-- 引入聊天框组件并传递必要的数据 -->
+            <ChatComponent :closeChat="closeChat" />
         </div>
     </footer>
 </template>
@@ -65,22 +92,28 @@
             height: 190px;
             text-align: center;
             padding: 0 72px;
-            border-right: 1px solid #f2f2f2;
+            //border-right: 1px solid #f2f2f2;
             color: #999;
 
             &:first-child {
-                padding-left: 0;
+                padding-left: 0px;
+                width: 340px;
             }
 
             &:last-child {
                 border-right: none;
-                padding-right: 0;
+                padding-left: 600px;
+                padding-right: 0px;
             }
         }
 
         dt {
             line-height: 1;
             font-size: 18px;
+
+            &:last-child {
+                margin-left: 500px;
+            }
         }
 
         dd {
@@ -90,6 +123,7 @@
             height: 92px;
             padding-top: 10px;
             border: 1px solid #ededed;
+            justify-content: space-between;
 
             .iconfont {
                 font-size: 36px;
@@ -104,7 +138,7 @@
             }
 
             &:last-child {
-                margin-right: 0;
+                margin-left: 20px;
             }
         }
 

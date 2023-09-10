@@ -6,7 +6,7 @@ import { useUserStore } from '/Users/shiyutian/letao/letao_userpc/src/stores/use
 
 // 创建axios实例
 const httpInstance = axios.create({
-    baseURL: 'http://2bd22457.r10.cpolar.top',
+    baseURL: 'http://62e78227.r1.cpolar.top',
     timeout: 10000,
    // headers: { authorization: 123456 }
     

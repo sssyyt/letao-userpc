@@ -18,7 +18,7 @@ const form = ref({
     account: "默认name",
     phoneNumber: "18362280000",
     password: "112233",
-    passwordConfirmation:'112233',
+    passwordConfirmation: '112233',
     sex: "0",
     email: "123@qq.com",
     agree: true
@@ -59,18 +59,18 @@ const rules = {
     passwordConfirmation: [
         { required: true, message: '请确认密码', trigger: 'blur' },
         { min: 6, max: 32, message: '密码长度为6-32个字符', trigger: 'blur' },
-        ],
-agree: [
-    {
-        validator: (rule, value, callback) => {
-            if (value) {
-                callback()
-            } else {
-                callback(new Error('请勾选协议'))
+    ],
+    agree: [
+        {
+            validator: (rule, value, callback) => {
+                if (value) {
+                    callback()
+                } else {
+                    callback(new Error('请勾选协议'))
+                }
             }
         }
-    }
-]
+    ]
 }
 
 
@@ -91,20 +91,20 @@ const doRegister = () => {
             if (valid) {
                 const res = await postRegister({ account, phoneNumber, password: encrypted, sex, email })
                 rcode.value = res
-              //  console.log(82173, rcode.value)
+                //  console.log(82173, rcode.value)
                 if (rcode.value.code === 1) {
                     ElMessage({ type: 'success', message: '注册成功' })
                     router.replace({ path: '/login' })
                 }
-                 if (rcode.value.code === 0) {
+                if (rcode.value.code === 0) {
                     ElMessage({ type: 'warning', message: rcode.value.msg })
 
                 }
             }
-           
+
         })
     }
-     else {
+    else {
         ElMessage({ type: 'warning', message: '确认密码与原密码不匹配' })
 
     }
@@ -146,18 +146,18 @@ const doRegister = () => {
                             status-icon>
 
                             <el-form-item prop="account" label="用户名">
-                                <el-input v-model="form.account" clearable/>
+                                <el-input v-model="form.account" clearable />
                             </el-form-item>
 
                             <el-form-item prop="phoneNumber" label="手机号">
-                                <el-input v-model="form.phoneNumber" clearable/>
+                                <el-input v-model="form.phoneNumber" clearable />
                             </el-form-item>
- 
+
                             <el-form-item prop="password" label="密码">
-                                <el-input v-model="form.password" clearable type="password"/>
+                                <el-input v-model="form.password" clearable type="password" />
                             </el-form-item>
                             <el-form-item prop="passwordConfirmation" label="确认密码">
-                                <el-input type="password" v-model="form.passwordConfirmation" clearable/>
+                                <el-input type="password" v-model="form.passwordConfirmation" clearable />
                             </el-form-item>
 
                             <el-form-item prop="sex" label="性别">
@@ -169,7 +169,7 @@ const doRegister = () => {
 
 
                             <el-form-item prop="email" label="邮箱">
-                                <el-input v-model="form.email" clearable/>
+                                <el-input v-model="form.email" clearable />
                             </el-form-item>
 
                             <el-form-item prop="agree" label-width="46px">
@@ -189,9 +189,9 @@ const doRegister = () => {
         <footer class="register-footer">
             <div class="container">
                 <p>
-                    <a href="javascript:;">关于我们</a>
-                    <a href="javascript:;">帮助中心</a>
-                    <a href="javascript:;">售后服务</a>
+                    <a href="javascript:;" @click="$router.push('/aboutus')">关于我们</a>
+                    <a href="javascript:;" @click="$router.push('/help')">帮助中心</a>
+                    <!-- <a href="javascript:;">售后服务</a> -->
                 </p>
                 <p>CopyRight &copy; 乐淘商务</p>
             </div>

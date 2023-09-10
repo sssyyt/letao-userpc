@@ -38,8 +38,8 @@ const confirm = () => {
         <template v-else>
           <li><a href="javascript:;" @click="$router.push('/register')">注册</a></li>
           <li><a href="javascript:;" @click="$router.push('/login')">登录</a></li>
-          <li><a href="javascript:;">帮助中心</a></li>
-          <li><a href="javascript:;">关于我们</a></li>
+          <li><a href="javascript:;"  @click="$router.push('/help')">帮助中心</a></li>
+          <li><a href="javascript:;" @click="$router.push('/aboutus') ">关于我们</a></li>
         </template>
       </ul>
     </div>

@@ -10,6 +10,8 @@ import Register from "@/views/Register/index.vue"
 import Detail from '@/views/Detail/index.vue'
 import Checkout from '@/views/Checkout/index.vue'
 import User from '@/views/User/index.vue'
+import Help from '@/views/others/help.vue'
+import aboutus from '@/views/others/aboutus.vue'
 
 import miaoshaDetail from '@/views/miaosha/miaoshaDetail.vue'
 const router = createRouter({
@@ -19,6 +21,13 @@ const router = createRouter({
       path: '/',
       component: Layout,
       children: [
+        {
+          path: 'help',
+          component: Help
+        }, {
+          path: 'aboutus',
+          component: aboutus
+        },
         {
           path: '',
           component: Home
@@ -57,6 +66,7 @@ const router = createRouter({
         }
       ]
     },
+   
     {
       path: '/login',
       component: Login
