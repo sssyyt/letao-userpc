@@ -9,12 +9,28 @@ export function getRSA() {
 
 //校验后获取用户信息
 export function getUserInfo() {
-  // console.log('getUserInfo开始')
   return request({
     url: '/user'
   })
 
 }
+export function changeUserInfo({ account,
+  sex,
+  email }) {
+
+  return request({
+    url: '/user',
+    method: 'PUT',
+    params: {
+      account,
+      sex,
+      email
+
+    }
+  })
+
+}
+
 
 //获取手机登录验证码
 export function getCaptcha(phoneNumber) {
@@ -84,12 +100,24 @@ export const getdefaultAdrAPI = () => {
 }
 
 
-export const senddefaultAdrAPI = ({ consigneeName, consigneePhoneNumber, consigneeSex ,detail}) => {
+export const uploadimgAPI = (file) => {
+  var form = new FormData();
+  form.append("file", file);
+  // console.log('form', form)
+  return request({
+    url: '/upload/userImage',
+    method: 'POST',
+    data: form
+  })
+}
+
+
+export const senddefaultAdrAPI = ({ consigneeName, consigneePhoneNumber, consigneeSex, detail }) => {
   return request({
     url: '/user/address',
     method: 'PUT',
     data: {
-      provinceId:0,
+      provinceId: 0,
       consigneeName,
       consigneePhoneNumber,
       consigneeSex,

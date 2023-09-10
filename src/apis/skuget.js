@@ -10,3 +10,14 @@ export function getSKU(spuId) {
         }
     })
 }
+
+//通过spuid查询评价
+export function getcomSKU(spuId) {
+    return request({
+        url: '/product/comment',
+        params: {
+            spuId
+        }
+    })
+}
+

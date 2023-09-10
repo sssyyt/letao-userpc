@@ -2,9 +2,10 @@
 //评价显示以及锚点
 <script setup>
 import { ElMessage } from 'element-plus'
-import { getSKU } from '@/apis/skuget'
+import { getSKU, getcomSKU } from '@/apis/skuget'
 import { onMounted, ref } from 'vue'
 import { useCartStore } from '@/stores/cartStore'
+import CommentList from '@/views/Detail/comment.vue'
 const cartStore = useCartStore()
 import { useRoute } from 'vue-router'
 import imageview from '/Users/shiyutian/letao/letao_userpc/src/components/ImageView/index.vue'
@@ -12,6 +13,30 @@ import Sku from '/Users/shiyutian/letao/letao_userpc/src/components/Sku/index.vu
 const skus = ref({})
 
 const skuList = ref([])
+const comlist = ref([])
+const getcomlist = async () => {
+  const res = await getcomSKU(route.params.id)
+  comlist.value = res.data.rows
+}
+onMounted(() => getcomlist())
+
+
+// Extract and process skuList
+const skuListt = skus.value.skuList;
+skuList.value = skus.value.skuList;
+//console.log('skuList在这里', skuList);
+//console.log('skuListvalue在这里', skuList.value);
+
+if (Array.isArray(skuListt)) {
+  skuListt.forEach((sku) => {
+    if (sku.hasImage) {
+      showimagelist.value.push(sku.hasImage);
+    }
+  });
+}
+
+//console.log(showimagelist.value);
+
 
 const skuObj = ref({})
 
@@ -123,39 +148,7 @@ const addCart = () => {
 
 
 
-// 评论模块
 
-const config = ref({
-  user: {
-    id: 1,
-    username: 'jack',
-    avatar: 'https://static.juzicon.com/avatars/avatar-200602130320-HMR2.jpeg?x-oss-process=image/resize,w_100',
-    // 评论id数组 建议:存储方式用户uid和评论id组成关系,根据用户uid来获取对应点赞评论id,然后加入到数组中返回
-  },
-  comments: [],
-  total: 10
-})
-
-
-config.value.comments = [
-  {
-    id: '1',
-    parentId: null,
-    uid: '1',
-    address: '来自上海',
-    content:
-      '缘生缘灭，缘起缘落，我在看别人的故事，别人何尝不是在看我的故事?别人在演绎人生，我又何尝不是在这场戏里?谁的眼神沧桑了谁?我的眼神，只是沧桑了自己[喝酒]',
-    likes: 2,
-    contentImg: 'https://gitee.com/undraw/undraw-ui/raw/master/public/docs/normal.webp',
-    createTime: '1分钟前',
-    user: {
-      username: '落🤍尘',
-      avatar: 'https://static.juzicon.com/avatars/avatar-200602130320-HMR2.jpeg?x-oss-process=image/resize,w_100',
-      level: 6,
-      homeLink: '/1'
-    }
-  }
-]
 
 </script>
 
@@ -198,7 +191,9 @@ config.value.comments = [
                 <li>
                   <p>商品评价</p>
                   <p>{{ commentnum }}+</p>
-                  <p><i class="iconfont icon-comment-filling"></i>查看评价</p>
+                  <p><a href="#comment-section"><i class="iconfont icon-comment-filling"></i>查看评价</a></p>
+
+                  <!-- <p><i class="iconfont icon-comment-filling"></i>查看评价</p> -->
                 </li>
                 <!-- <li>
                   <p>收藏人气</p>
@@ -251,7 +246,6 @@ config.value.comments = [
                     <span>无忧退货</span>
                     <span>快速退款</span>
                     <span>免费包邮</span>
-                    <a href="javascript:;">了解详情</a>
                   </dd>
                 </dl>
               </div>
@@ -273,12 +267,11 @@ config.value.comments = [
         </div>
       </div>
 
-<!-- 评论模块 -->
-  <div class="comment-view" style="padding: 0px">
-      <u-comment :config="config"  >
-        <!-- <template #list-title>全部评论</template> -->
-      </u-comment>
-    </div>
+      <div id="comment-section">
+        <h2 class="comment-title">商品评价</h2>
+        <CommentList :Commentlist="comlist" />
+      </div>
+
 
 
     </div>
@@ -288,6 +281,15 @@ config.value.comments = [
 
 <style scoped lang='scss'>
 .letao-goods-page {
+  .comment-title {
+    font-size: 24px;
+    /* 标题字体大小 */
+    color: #333;
+    /* 标题文字颜色 */
+    margin-bottom: 20px;
+    /* 设置标题与评论模块之间的间距 */
+  }
+
   .goods-info {
     min-height: 600px;
     background: #fff;
@@ -561,5 +563,4 @@ config.value.comments = [
   background-image: none;
   background-color: #fff;
   border-color: #ebeef5;
-}
-</style>
+}</style>

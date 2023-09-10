@@ -19,3 +19,10 @@ export const miaoshaAPI = (id) => {
     })
 }
 
+
+export const sendmiaoshaAPI = (id) => {
+    return httpInstance({
+        url: '/seckill/order/' + id,
+
+    })
+}

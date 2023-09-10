@@ -9,6 +9,8 @@ import categorytwo from '@/views/CategoryTwo/index.vue'
 import Register from "@/views/Register/index.vue"
 import Detail from '@/views/Detail/index.vue'
 import Checkout from '@/views/Checkout/index.vue'
+import User from '@/views/User/index.vue'
+
 import miaoshaDetail from '@/views/miaosha/miaoshaDetail.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,6 +26,10 @@ const router = createRouter({
         {
           path: 'category/:id',
           component: Category
+        },
+        {
+          path: 'user',
+          component: User
         },
         {
           path: 'category/miaosha',

@@ -6,7 +6,7 @@ import { getdefaultAdrAPI, senddefaultAdrAPI } from '@/apis/user'
 import { getRegionsAPI, getshopRegionsAPI } from '@/apis/shops'
 import { ref, onMounted } from 'vue'
 import { useCartStore } from '@/stores/cartStore'
-
+const selectedPaymentMethod = ref("支付宝");
 const cartStore = useCartStore()
 //const router = useRouter()
 //console.log(cartStore.cartList);
@@ -302,6 +302,16 @@ onMounted(() => { getfilterShops() })
           </dl>
         </div>
       </div>
+
+      <!-- 支付方式 -->
+  <h3 class="box-title">支付方式</h3>
+  <div class="box-body">
+    <div class="payment-options">
+      <el-radio class="paybtn" v-model="selectedPaymentMethod" label="支付宝">支付宝</el-radio>
+      <el-radio class="paybtn" v-model="selectedPaymentMethod" label="微信">微信</el-radio>
+    </div>
+  </div>
+
       <!-- 提交订单 -->
       <div class="submit">
         <el-button @click="createOrder" type="primary" size="large">提交订单</el-button>
@@ -428,7 +438,22 @@ onMounted(() => { getfilterShops() })
     }
   }
 }
+.payment-options {
+  display: flex;
+  align-items: center;
 
+  .paybtn {
+    margin-right: 200px; // 适当调整间距
+     &:first-child {
+        margin-right: 400px;
+        margin-left : 100px;
+      }
+
+      &:last-child {
+        margin-right: 200px;
+      }
+  }
+}
 .address {
   border: 1px solid #f5f5f5;
   display: flex;
