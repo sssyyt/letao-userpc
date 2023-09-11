@@ -31,6 +31,26 @@ export const delCartAPI = (skuId) => {
   })
 }
 
+
+export const sendorderAPI = ({ orderInfo: {
+  paymentMethod,
+  deliveryMethod,
+  shopId
+} }) => {
+  return request({
+    url: '/order',
+    method: 'POST',
+    data: {
+      orderInfo: {
+        paymentMethod,
+        deliveryMethod,
+        shopId
+      }
+    }
+  })
+}
+
+
 // 合并购物车
 
 // export const mergeCartAPI = (data) => {

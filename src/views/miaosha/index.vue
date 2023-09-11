@@ -23,6 +23,7 @@ const { disabled, load, miaoshaList } = usemiaosha()
                   <h3>商品列表 </h3>
                   <div class="body" v-infinite-scroll="load" :infinite-scroll-disabled="disabled">
                         <miaoshaGoodsItem v-for="goods in miaoshaList" :goods="goods" :key="goods.id" />
+                        <i></i> <i></i> <i></i> <i></i> <i></i> <i></i> <i></i> <i></i>
                   </div>
             </div>
 
@@ -33,7 +34,8 @@ const { disabled, load, miaoshaList } = usemiaosha()
 
 <style scoped lang="scss">
 .page {
-       margin-top: 20px;
+      margin-top: 20px;
+
       h3 {
             font-size: 28px;
             color: #666;
@@ -51,6 +53,11 @@ const { disabled, load, miaoshaList } = usemiaosha()
                   padding: 0px 32px;
                   flex-wrap: wrap;
                   justify-content: center;
+                  justify-content: space-between;
+
+                  i {
+                        width: 400px;
+                  }
 
                   //justify-content: space-around;
                   //padding: 0 40px 30px;

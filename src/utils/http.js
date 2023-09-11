@@ -6,17 +6,17 @@ import { useUserStore } from '/Users/shiyutian/letao/letao_userpc/src/stores/use
 
 // 创建axios实例
 const httpInstance = axios.create({
-    baseURL: 'http://62e78227.r1.cpolar.top',
-    timeout: 10000,
-   // headers: { authorization: 123456 }
-    
+    baseURL: 'http://fe7074a.r9.vip.cpolar.cn',
+    timeout: 50000,
+    // headers: { authorization: 123456 }
+
 })
 
 // axios请求拦截器
 httpInstance.interceptors.request.use(config => {
     const userStore = useUserStore()
     const token = userStore.userToken.data
-    if (token) { 
+    if (token) {
         config.headers.authorization = `${token}`
     }
     return config

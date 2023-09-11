@@ -105,7 +105,7 @@ const create = () => {
     setTimeout(() => {
         clearInterval(intervalId);
         console.log('停止定时器');
-    }, 1000);
+    }, 3000);
 };
 
 const beforeUnmount = () => {
@@ -139,7 +139,7 @@ onBeforeUnmount(beforeUnmount);
             </div> <!-- 渲染消息列表，类似之前的代码 -->
         </div>
         <div class="chat-input">
-            <input v-model="inputMessage" type="text" placeholder="输入消息" />
+            <input v-model="inputMessage" type="text" placeholder="输入消息" @keydown.enter="sendMessage" />
             <button @click="sendMessage">发送</button>
         </div>
     </div>
@@ -175,7 +175,7 @@ onBeforeUnmount(beforeUnmount);
 }
 
 .chat-header {
-    background-color: #333;
+    background-color: #ff914d;
     color: #fff;
     padding: 10px;
     display: flex;
@@ -223,7 +223,7 @@ onBeforeUnmount(beforeUnmount);
 }
 
 .chat-input button {
-    background-color: #333;
+    background-color: #ff914d;
     color: #fff;
     border: none;
     padding: 5px 10px;
@@ -231,6 +231,6 @@ onBeforeUnmount(beforeUnmount);
 }
 
 .chat-input button:hover {
-    background-color: #555;
+    background-color: #ff914d;
 }
 </style>

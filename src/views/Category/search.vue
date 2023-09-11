@@ -1,20 +1,25 @@
 <script setup>
+import { getsearch } from '@/apis/search'
+import { ref, onMounted } from 'vue'
+import { onBeforeRouteUpdate } from 'vue-router'
 
+import { useRoute } from 'vue-router'
+import GoodsItem from '/Users/shiyutian/letao/letao_userpc/src/views/Home/components/GoodsItem.vue'
+const route = useRoute()
+//const queryParam = toRef(route.currentRoute.value.params, 'query');
+const searchlist = ref([])
+const getsearchlist = async () => {
+    const res = await getsearch({ query: route.params.query })
+    console.log(res);
 
-//import { useBanner } from './composables/useBanner'
-import { useCategoryone , useCategoryoneproduct } from './composables/useCategoryone'
-import { useCategorytwo } from './composables/useCategorytwo'
-//const { bannerList } = useBanner()
-// import {  ref } from 'vue'
-// import {  getproductCategoryone } from '@/apis/categoryone'
-
-import GoodsItem from '../Home/components/GoodsItem.vue';
-const { categoryone } = useCategoryone()
-const { categorytwo } = useCategorytwo()
-const {  disabled,load,productlist } = useCategoryoneproduct()
-
-
-
+    searchlist.value = res.data.rows
+    console.log(searchlist.value);
+}
+onMounted(() => getsearchlist())
+onBeforeRouteUpdate((to) => {
+    // 存在问题：使用最新的路由参数请求最新的分类数据
+    getsearchlist(to.params.id)
+})
 </script>
 
 <template>
@@ -24,38 +29,23 @@ const {  disabled,load,productlist } = useCategoryoneproduct()
             <div class="bread-container">
                 <el-breadcrumb separator=">">
                     <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-                    <el-breadcrumb-item>{{ categoryone.name }}</el-breadcrumb-item>
+                    <el-breadcrumb-item>{{ route.params.query }}</el-breadcrumb-item>
                 </el-breadcrumb>
             </div>
 
         </div>
+
         <div class="sub-list">
-            <h3>全部分类</h3>
-            <ul>
-                <li v-for="i in categorytwo" :key="i.id">
-                    <RouterLink :to="`/category/sub/${i.id}`">
-                        <img :src="i.picture"  />
-                        <p>{{ i.name }}</p>
-                    </RouterLink>
-
-                </li>
-            </ul>
+            <h3>搜索推荐 </h3>
+            <div class="body">
+                <GoodsItem v-for="goods in searchlist" :goods="goods" :key="goods.id" />
+            </div>
         </div>
-
-          <div class="sub-list">
-               <h3>商品列表 </h3>
-            <div class="body" v-infinite-scroll="load" :infinite-scroll-disabled="disabled">
-                <GoodsItem v-for="goods in productlist" :goods="goods" :key="goods.id" />
-                <i></i> <i></i> <i></i> <i></i> <i></i> <i></i> <i></i>
-            </div>
-
-            </div>
     </div>
 </template>
 
 
 <style scoped lang="scss">
-
 .top-category {
     h3 {
         font-size: 28px;
@@ -66,18 +56,16 @@ const {  disabled,load,productlist } = useCategoryoneproduct()
     }
 
     .sub-list {
-      
+
         background-color: #fff;
-         .body {
-           display: flex;
+
+        .body {
+            display: flex;
             padding: 0px 32px;
             flex-wrap: wrap;
             justify-content: center;
-            justify-content: space-between;
 
-            i{
-                width: 250px;
-            }
+            //justify-content: space-around;
             //padding: 0 40px 30px;
         }
 
@@ -106,7 +94,7 @@ const {  disabled,load,productlist } = useCategoryoneproduct()
 
                     p {
                         line-height: 60px;
-                       text-align:center;
+                        text-align: center;
                     }
 
                     &:hover {

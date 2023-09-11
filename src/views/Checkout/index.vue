@@ -4,10 +4,73 @@
 import { ElMessage } from 'element-plus'
 import { getdefaultAdrAPI, senddefaultAdrAPI } from '@/apis/user'
 import { getRegionsAPI, getshopRegionsAPI } from '@/apis/shops'
+import { sendorderAPI } from '@/apis/cart'
+import { useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import { useCartStore } from '@/stores/cartStore'
+import { sendcheck } from '@/apis/orders'
+const router = useRouter()
+
+//import confirm from '/Users/shiyutian/letao/letao_userpc/src/views/Checkout/confirm.vue'
 const selectedPaymentMethod = ref("支付宝");
 const cartStore = useCartStore()
+//const visiableDialog = ref(null)
+const orderid = ref(0)
+const countdown = ref(0);
+const step = ref(0); // 当前步骤，初始为0
+const paymentConfirmDialog = ref(false); // 支付确认弹框的显示状态
+
+const showPaymentConfirm = () => {
+  paymentConfirmDialog.value = true;
+};
+
+const closePaymentConfirmDialog = () => {
+  paymentConfirmDialog.value = false;
+  // visiableDialog.value = false;
+  startCountdown();
+  step.value = 1;
+};
+
+const confirmPayment = async () => {
+  paymentConfirmDialog.value = false
+  const res = await sendcheck(orderid.value)
+  if (res.code === 1) {
+    ElMessage.success('支付成功')
+
+    cartStore.updateNewList()
+    router.push({
+      path: '/myorders'
+    })
+  }
+  else
+    ElMessage.warning(res.msg)
+
+  // 切换步骤为0，显示提交订单按钮
+  step.value = 0;
+};
+
+
+
+
+const startCountdown = () => {
+  console.log('开始倒计时');
+  countdown.value = 900; // 15 minutes in seconds
+  const interval = setInterval(() => {
+    countdown.value -= 1;
+    if (countdown.value <= 0) {
+      clearInterval(interval);
+      cancel();
+    }
+  }, 1000);
+}
+
+const cancel = () => {
+  cartStore.updateNewList()
+  router.push({
+    path: '/myorders'
+  })
+
+}
 //const router = useRouter()
 //console.log(cartStore.cartList);
 const curAddress = ref({}) // 默认地址
@@ -17,7 +80,7 @@ const editedAddress = ref({})
 const editedConsigneeSex = ref({})
 const filterRegion = ref([])
 const filterShops = ref([])
-const selectedShop = ref([])
+const selectedShop = ref({})
 
 const selectedOption = ref("自提") // 默认地址
 const defaultAdr = async () => {
@@ -85,46 +148,44 @@ const getfilterShops = async () => {
 onMounted(() => { defaultAdr() })
 onMounted(() => { getfilterShops() })
 
-// 控制弹框打开
-//const showDialog = ref(false)
 
 
-// // 切换地址
-// const activeAddress = ref({})
-// const switchAddress = (item) => {
-//   activeAddress.value = item
-// }
-// const confirm = () => {
-//   curAddress.value = activeAddress.value
-//   showDialog.value = false
-//   activeAddress.value = {}
-// }
+const createOrder = async () => {
+  let paymentMethod = 0; // 默认为微信
+  let deliveryMethod = 0; // 默认为快递
 
-// // 创建订单
-// const createOrder = async () => {
-//   const res = await createOrderAPI({
-//     deliveryTimeType: 1,
-//     payType: 1,
-//     payChannel: 1,
-//     buyerMessage: '',
-//     goods: checkInfo.value.goods.map(item => {
-//       return {
-//         skuId: item.skuId,
-//         count: item.count
-//       }
-//     }),
-//     addressId: curAddress.value.id
-//   })
-//   const orderId = res.result.id
-//   router.push({
-//     path: '/pay',
-//     query: {
-//       id: orderId
-//     }
-//   })
-//   // 更新购物车
-//   cartStore.updateNewList()
-// }
+  if (selectedPaymentMethod.value === '支付宝') {
+    paymentMethod = 1;
+  } else if (selectedPaymentMethod.value === '银行卡') {
+    paymentMethod = 2;
+  }
+
+  if (selectedOption.value === '自提') {
+    deliveryMethod = 1;
+  }
+
+  const orderInfo = {
+    paymentMethod: paymentMethod,
+    deliveryMethod: deliveryMethod
+  };
+
+  // 如果是自提，添加shopId参数
+  if (deliveryMethod === 1) {
+    orderInfo.shopId = selectedShop.value;
+  }
+
+  const res = await sendorderAPI({ orderInfo });
+  if (res.code === 1) {
+    ElMessage.success('创建订单成功')
+    paymentConfirmDialog.value = true
+    orderid.value = res.data.orderInfo.id
+
+  }
+  else
+    ElMessage.warning(res.msg)
+};
+
+
 
 </script>
 
@@ -273,13 +334,7 @@ onMounted(() => { getfilterShops() })
       </div>
 
 
-      <!-- 支付方式
-          <h3 class="box-title">支付方式</h3>
-          <div class="box-body">
-            <a class="my-btn active" href="javascript:;">在线支付</a>
-            <a class="my-btn" href="javascript:;">货到付款</a>
-            <span style="color:#999">货到付款需付5元手续费</span>
-          </div> -->
+
       <!-- 金额明细 -->
       <h3 class="box-title">金额明细</h3>
       <div class="box-body">
@@ -304,20 +359,53 @@ onMounted(() => { getfilterShops() })
       </div>
 
       <!-- 支付方式 -->
-  <h3 class="box-title">支付方式</h3>
-  <div class="box-body">
-    <div class="payment-options">
-      <el-radio class="paybtn" v-model="selectedPaymentMethod" label="支付宝">支付宝</el-radio>
-      <el-radio class="paybtn" v-model="selectedPaymentMethod" label="微信">微信</el-radio>
-    </div>
-  </div>
+      <h3 class="box-title">支付方式</h3>
+      <div class="box-body">
+        <div class="payment-options">
+          <el-radio class="paybtn" v-model="selectedPaymentMethod" label="支付宝">支付宝</el-radio>
+          <el-radio class="paybtn" v-model="selectedPaymentMethod" label="微信">微信</el-radio>
+          <el-radio class="paybtn" v-model="selectedPaymentMethod" label="银行卡">银行卡</el-radio>
 
-      <!-- 提交订单 -->
-      <div class="submit">
-        <el-button @click="createOrder" type="primary" size="large">提交订单</el-button>
+        </div>
       </div>
 
+      <!-- 提交订单 -->
+      <!-- <div class="submit">
+        <el-dialog title="提示" width="30%" v-model="visiableDialog">
+          <span>请确认支付？</span>
+          <template #footer>
+            <span class="dialog-footer">
+              <el-button @click="close">取 消</el-button>
+              <el-button type="primary" @click="confirm">确 定</el-button>
+            </span>
+          </template>
+        </el-dialog>
+        <div class="count" v-if="countdown > 0">
+          <p> {{ countdown }} second后还未支付将自动取消订单</p>
+        </div>
+        <el-button @click="createOrder" type="primary" size="large">提交订单</el-button>
+      </div> -->
 
+      <div class="submit">
+        <!-- 当步骤为0时，显示提交订单按钮 -->
+        <el-button v-if="step === 0" @click="createOrder" type="primary" size="large">提交订单</el-button>
+        <!-- 当步骤为1时，显示立即支付按钮 -->
+        <el-button v-if="step === 1" @click="showPaymentConfirm" type="primary" size="large">立即支付</el-button>
+
+        <el-dialog title="提示" width="30%" v-model="paymentConfirmDialog">
+          <span>请确认支付？</span>
+          <template #footer>
+            <span class="dialog-footer">
+              <el-button @click="closePaymentConfirmDialog">取 消</el-button>
+              <el-button type="primary" @click="confirmPayment">确 定</el-button>
+            </span>
+          </template>
+        </el-dialog>
+
+        <div class="count" v-if="countdown > 0">
+          <p> {{ countdown }} second后还未支付将自动取消订单</p>
+        </div>
+      </div>
 
     </div>
 
@@ -332,6 +420,18 @@ onMounted(() => { getfilterShops() })
   margin-top: 20px;
   padding: 0 0px 0 300px;
 
+  .count {
+    font-size: 16px;
+
+    justify-content: center;
+    //padding-left: 400px;
+    line-height: 50px;
+    border-bottom: 1px solid #f5f5f5;
+    text-align: center;
+    border-top: 1px solid #f5f5f5;
+    margin-bottom: 80px;
+
+  }
 
   .wrapper {
     background: #fff;
@@ -428,32 +528,38 @@ onMounted(() => { getfilterShops() })
       font-size: 22px;
 
 
-      &:first-child {
+      &:first-confirm {
         margin-right: 70px;
       }
 
-      &:last-child {
+      &:last-confirm {
         margin-right: 20px;
       }
     }
   }
 }
+
 .payment-options {
   display: flex;
   align-items: center;
 
   .paybtn {
-    margin-right: 200px; // 适当调整间距
-     &:first-child {
-        margin-right: 400px;
-        margin-left : 100px;
-      }
+    margin-left: 0px; // 适当调整间距
+    display: center;
+    justify-content: space-between;
 
-      &:last-child {
-        margin-right: 200px;
-      }
+    &:first-child {
+      margin-left: 200px;
+      margin-right: 50px;
+
+    }
+
+    &:last-child {
+      margin-left: 20px;
+    }
   }
 }
+
 .address {
   border: 1px solid #f5f5f5;
   display: flex;
@@ -522,7 +628,7 @@ onMounted(() => { getfilterShops() })
       font-size: 22px;
 
 
-      &:first-child {
+      &:first-confirm {
         margin-right: 10px;
       }
     }
@@ -597,12 +703,13 @@ onMounted(() => { getfilterShops() })
       font-size: 22px;
 
 
-      &:first-child {
+      &:first-confirm {
         margin-right: 10px;
       }
     }
   }
 }
+
 .goods {
   width: 100%;
   border-collapse: collapse;
@@ -627,14 +734,14 @@ onMounted(() => { getfilterShops() })
       line-height: 24px;
 
       p {
-        &:first-child {
+        &:first-confirm {
           color: #000;
           margin-bottom: 10px;
         }
       }
 
       p {
-        &:last-child {
+        &:last-confirm {
           color: #999;
           margin-top: 10px;
         }
@@ -654,11 +761,11 @@ onMounted(() => { getfilterShops() })
       padding: 20px;
       border-bottom: 1px solid #f5f5f5;
 
-      &:first-child {
+      &:first-confirm {
         border-left: 1px solid #f5f5f5;
       }
 
-      &:last-child {
+      &:last-confirm {
         border-right: 1px solid #f5f5f5;
       }
     }

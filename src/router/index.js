@@ -12,8 +12,10 @@ import Checkout from '@/views/Checkout/index.vue'
 import User from '@/views/User/index.vue'
 import Help from '@/views/others/help.vue'
 import aboutus from '@/views/others/aboutus.vue'
-
+import search from '@/views/Category/search.vue'
 import miaoshaDetail from '@/views/miaosha/miaoshaDetail.vue'
+import orderman from '/Users/shiyutian/letao/letao_userpc/src/views/Layout/components/ordermanage.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -29,12 +31,20 @@ const router = createRouter({
           component: aboutus
         },
         {
+          path: 'myorders',
+          component: orderman
+        },
+        {
           path: '',
           component: Home
         },
         {
           path: 'category/:id',
           component: Category
+        },
+        {
+          path: 'search/:query',
+          component: search
         },
         {
           path: 'user',

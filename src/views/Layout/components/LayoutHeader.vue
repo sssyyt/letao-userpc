@@ -1,5 +1,7 @@
 //导航栏亮
 <script setup>
+import { useRouter } from 'vue-router'
+
 import { getCategoryAPI } from '@/apis/categoryone'
 import { onMounted, ref } from 'vue'
 import HeaderCart from './HeaderCart.vue'
@@ -10,14 +12,22 @@ import HeaderCart from './HeaderCart.vue'
 //const {  parentid , skucategory } = getCategorytwo()
 const categoryList = ref([])
 
-// console.log(4444, categorytwo.value.id.value);
+const query = ref(''); // 输入框的查询值
+const router = useRouter();
+
+const search = () => {
+    // 调用搜索函数，并在新页面中传递查询参数
+    if (query.value.trim() !== "") {
+        router.push({ path: `/search/${query.value}` });
+    }
+};
 
 
 
 const getCategory = async () => {
     const res = await getCategoryAPI()
     categoryList.value = res.data
-   // console.log
+    // console.log
 }
 //const route = useRoute();
 onMounted(() => { getCategory() })
@@ -47,8 +57,8 @@ onMounted(() => { getCategory() })
                 </li>
             </ul>
             <div class="search">
-                <i class="iconfont icon-search"></i>
-                <input type="text" placeholder="搜一搜">
+                <i class="iconfont icon-search" @click="search"></i>
+                <input type="text" placeholder="搜一搜" v-model="query" @keydown.enter="search" />
             </div>
             <!-- 头部购物车 -->
             <HeaderCart />
